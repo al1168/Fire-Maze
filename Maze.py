@@ -22,4 +22,5 @@ if __name__ == '__main__':
     dimension = int(input("What is the dim of the maze?\n"))
     percent = float(input("What is the p value a tile is blocked?\n"))
     mymaze = Maze(dimension, percent)
+    print("testing")
     mymaze.render_maze()
