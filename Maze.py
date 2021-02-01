@@ -54,14 +54,16 @@ def main(win, width, dimension, prob):
 	target = grid[dim-1][dim-1].set_target()
 
 	while(density > 0):
-		x = random.randrange(10)
-		y = random.randrange(10)
+		x = random.randrange(dim)
+		y = random.randrange(dim)
 		cell = grid[x][y]
 		if (cell.is_start or cell.is_target or cell.is_blocked()):
 			continue
 		cell.set_blocked()
 		density -= 1
+		print(str(x)+","+str(y))
 
+	print("Maze Created Now Generating...")
 	run = True
 	while run:
 		draw(win, grid, dim, width)
