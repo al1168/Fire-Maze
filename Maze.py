@@ -3,22 +3,9 @@ import math
 from queue import PriorityQueue
 import random
 import Node
+import globals
 
-WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("A* Path Finding Algorithm")
-
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 255, 0)
-YELLOW = (255, 255, 0)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-PURPLE = (128, 0, 128)
-ORANGE = (255, 165 ,0)
-GREY = (128, 128, 128)
-TURQUOISE = (64, 224, 208)
-
+pygame.display.set_caption("CS440 Proj1")
 
 def create_grid(rows, width):
 	grid = []
@@ -35,13 +22,13 @@ def create_grid(rows, width):
 def draw_grid(win, rows, width):
 	gap = width // rows
 	for i in range(rows):
-		pygame.draw.line(win, GREY, (0, i * gap), (width, i * gap))
+		pygame.draw.line(win, globals.GREY, (0, i * gap), (width, i * gap))
 		for j in range(rows):
-			pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, width))
+			pygame.draw.line(win, globals.GREY, (j * gap, 0), (j * gap, width))
 
 
 def draw(win, grid, rows, width):
-	win.fill(WHITE)
+	win.fill(globals.WHITE)
 
 	for row in grid:
 		for cell in row:
@@ -71,7 +58,7 @@ def main(win, width):
 				continue
 			bool = random.getrandbits(1)
 			if(bool == 1):
-				density -= 0
+				density -= 1
 				cell.set_blocked()
 
 	run = True
@@ -83,4 +70,5 @@ def main(win, width):
 
 	pygame.quit()
 
-main(WIN, WIDTH)
+if __name__ == '__main__':
+	main(globals.WIN, globals.WIDTH)
