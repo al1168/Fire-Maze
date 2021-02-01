@@ -1,11 +1,15 @@
+import sys
 import pygame
 import math
 from queue import PriorityQueue
 import random
 import Node
-import globals
 
 pygame.display.set_caption("CS440 Proj1")
+
+WIDTH = 800
+WIN = pygame.display.set_mode((WIDTH, WIDTH))
+pygame.display.set_caption("A* Path Finding Algorithm")
 
 def create_grid(rows, width):
 	grid = []
@@ -22,13 +26,13 @@ def create_grid(rows, width):
 def draw_grid(win, rows, width):
 	gap = width // rows
 	for i in range(rows):
-		pygame.draw.line(win, globals.GREY, (0, i * gap), (width, i * gap))
+		pygame.draw.line(win, Node.GREY, (0, i * gap), (width, i * gap))
 		for j in range(rows):
-			pygame.draw.line(win, globals.GREY, (j * gap, 0), (j * gap, width))
+			pygame.draw.line(win, Node.GREY, (j * gap, 0), (j * gap, width))
 
 
 def draw(win, grid, rows, width):
-	win.fill(globals.WHITE)
+	win.fill(Node.WHITE)
 
 	for row in grid:
 		for cell in row:
@@ -39,27 +43,24 @@ def draw(win, grid, rows, width):
 
 
 
-def main(win, width):
-	dim = 10
-	p = .1
+def main(win, width, dimension, prob):
+	dim = dimension
+	p = prob
 	density = (dim ** 2) * p
 
 	grid = create_grid(dim, width)
 
 	start = grid[0][0].set_start()
-	end = grid[dim-1][dim-1].set_target()
+	target = grid[dim-1][dim-1].set_target()
 
-
-	for i in range(0, len(grid)):
-		for cell in grid[i]:
-			if density == 0:
-				break
-			elif(cell.is_start or cell.is_target):
-				continue
-			bool = random.getrandbits(1)
-			if(bool == 1):
-				density -= 1
-				cell.set_blocked()
+	while(density > 0):
+		x = random.randrange(10)
+		y = random.randrange(10)
+		cell = grid[x][y]
+		if (cell.is_start or cell.is_target or cell.is_blocked()):
+			continue
+		cell.set_blocked()
+		density -= 1
 
 	run = True
 	while run:
@@ -71,4 +72,6 @@ def main(win, width):
 	pygame.quit()
 
 if __name__ == '__main__':
-	main(globals.WIN, globals.WIDTH)
+	dimension = int(sys.argv[1])
+	prob = float(sys.argv[2])
+	main(WIN, WIDTH, dimension, prob)

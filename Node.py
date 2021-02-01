@@ -1,5 +1,15 @@
-import globals
 import pygame
+
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 255, 0)
+YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+PURPLE = (128, 0, 128)
+ORANGE = (255, 165 ,0)
+GREY = (128, 128, 128)
+TURQUOISE = (64, 224, 208)
 
 class Cell:
 	def __init__(self, row, col, width, total_rows):
@@ -7,11 +17,11 @@ class Cell:
 		self.col = col
 		self.x = row * width
 		self.y = col * width
-		self.color = globals.WHITE
+		self.color = WHITE
 		self.is_start = False
 		self.is_target = False
 		self.is_closed = False
-		self.is_on_fire = globals.RED
+		self.is_on_fire = RED
 		self.neighbors = []
 		self.width = width
 		self.total_rows = total_rows
@@ -24,31 +34,31 @@ class Cell:
 	def is_closed(self):
 		return self.is_closed == True
 	def is_blocked(self):
-		return self.color == globals.BLACK
+		return self.color == BLACK
 	def is_start(self):
 		return self.is_start == True
 	def is_target(self):
 		return self.is_target == True
 	def is_on_fire(self):
-		return self.is_on_fire == globals.RED
+		return self.is_on_fire == RED
 
 	def set_start(self):
 		self.is_start = True
-		self.color = globals.GREEN
+		self.color = GREEN
 
 	def set_closed(self):
 		self.is_closed = True
 	def set_blocked(self):
-		self.color = globals.BLACK
+		self.color = BLACK
 
 	def set_target(self):
 		self.is_target = True
-		self.color = globals.BLUE
+		self.color = BLUE
 
 	def set_path(self):
-		self.color = globals.GREY
+		self.color = GREY
 	def set_on_fire():
-		self.color = globals.RED
+		self.color = RED
 
 	def draw(self, win):
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
