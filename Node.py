@@ -40,7 +40,7 @@ class Cell:
 	def is_target(self):
 		return self.is_target == True
 	def is_on_fire(self):
-		return self.is_on_fire == RED
+		return self.color == RED
 
 	def set_start(self):
 		self.is_start = True

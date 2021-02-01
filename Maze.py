@@ -53,15 +53,19 @@ def main(win, width, dimension, prob):
 	start = grid[0][0].set_start()
 	target = grid[dim-1][dim-1].set_target()
 
+	cnt = 0
 	while(density > 0):
 		x = random.randrange(dim)
 		y = random.randrange(dim)
 		cell = grid[x][y]
+		if cnt == (dim*dim)-2: #if the entire maze is blocked
+			break
 		if (cell.is_start or cell.is_target or cell.is_blocked()):
 			continue
 		cell.set_blocked()
 		density -= 1
-		print(str(x)+","+str(y))
+		cnt += 1
+		print("#"+str(cnt)+": ("+str(x)+","+str(y)+")")
 
 	print("Maze Created Now Generating...")
 	run = True
