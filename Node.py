@@ -77,6 +77,9 @@ class Cell:
 		if self.col > 0 and not grid[self.row][self.col - 1].is_blocked(): # LEFT
 			self.neighbors.append(grid[self.row][self.col - 1])
 
+	def get_neighbors(self):
+		return self.neighbors
+
 	def __lt__(self, other):
 		return False
 

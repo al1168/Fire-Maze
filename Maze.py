@@ -68,6 +68,16 @@ def main(win, width, dimension, prob):
 		print("#"+str(cnt)+": ("+str(x)+","+str(y)+")")
 
 	print("Maze Created Now Generating...")
+	'''
+	#testign neighbors
+	testCell = grid[4][4]
+	testCell.update_neighbors(grid)
+	nei = testCell.get_neighbors()
+	print(len(nei))
+	for i in nei:
+		print(i.get_pos())
+	'''
+
 	run = True
 	while run:
 		draw(win, grid, dim, width)
