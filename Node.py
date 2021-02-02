@@ -15,8 +15,8 @@ class Cell:
 	def __init__(self, row, col, width, total_rows):
 		self.row = row
 		self.col = col
-		self.x = row * width
-		self.y = col * width
+		self.x = col * width
+		self.y = row * width
 		self.color = WHITE
 		self.is_start = False
 		self.is_target = False
@@ -57,7 +57,7 @@ class Cell:
 
 	def set_path(self):
 		self.color = GREY
-	def set_on_fire():
+	def set_on_fire(self):
 		self.color = RED
 
 	def draw(self, win):
