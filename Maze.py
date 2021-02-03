@@ -90,7 +90,7 @@ def main(win, width, dimension, prob):
     print("Maze Created Now Generating...")
     '''
     #testign neighbors
-    testCell = grid[4][4]
+    testCell = grid[1][2]
     testCell.update_neighbors(grid)
     nei = testCell.get_neighbors()
     print(len(nei))
