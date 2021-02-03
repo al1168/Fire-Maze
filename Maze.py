@@ -78,7 +78,7 @@ def reconstruct_path(came_from, current, draw):
 #             draw()
 #             DFSuntil(draw, grid, neighbor, visited, dim, camefrom)
 
-def DFS(draw,grid,start,dim):
+def DFS(draw, grid, start, dim):
     visited = set()
     stack = [start]
     came_from = {}
@@ -88,9 +88,9 @@ def DFS(draw,grid,start,dim):
 
         print("\n")
         node = stack.pop()
-        print("exploring:"+'[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
-        if node.row == dim-1 and node.col == dim-1:
-            reconstruct_path(came_from,node,draw)
+        print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
+        if node.row == dim - 1 and node.col == dim - 1:
+            reconstruct_path(came_from, node, draw)
             break
         if node not in visited:
             visited.add(node)
@@ -101,8 +101,8 @@ def DFS(draw,grid,start,dim):
                 stack.append(neighbor)
                 came_from[neighbor] = node
 
-
     return True
+
 
 def main(win, width, dimension, prob):
     dim = dimension
@@ -132,7 +132,7 @@ def main(win, width, dimension, prob):
     print("Maze Created Now Generating...")
     '''
     #testign neighbors
-    testCell = grid[4][4]
+    testCell = grid[1][2]
     testCell.update_neighbors(grid)
     nei = testCell.get_neighbors()
     print(len(nei))
