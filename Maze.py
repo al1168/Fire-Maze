@@ -50,22 +50,64 @@ def draw(win, grid, rows, width):
     pygame.display.update()
 
 
-def DFS(draw, grid, start):
-    fringe = [start]
-    while fringe:
-        '#explore fringe'
-        current = fringe.pop()
-        for cell in current.neighbors:
-            print(str(cell.color))
-            print(str(cell.row) + ' ' + str(cell.col))
-    return True
+# def DFS(draw, grid, start, dim):
+#     visited = set()
+#     camefrom = {}
+#
+#     path = DFSuntil(draw, grid, start, visited, dim, camefrom)
+#     return path
 
+
+def reconstruct_path(came_from, current, draw):
+    while current in came_from:
+        current = came_from[current]
+        current.set_path()
+        draw()
+
+
+# def DFSuntil(draw, grid, node, visited, dim, camefrom):
+#     if node.row == dim - 1 and node.col == dim - 1:
+#         reconstruct_path(camefrom, node, draw)
+#         return True
+#
+#     visited.add(node)
+#     for neighbor in node.neighbors:
+#         if neighbor not in visited:
+#             camefrom[neighbor] = node
+#             neighbor.set_color()
+#             draw()
+#             DFSuntil(draw, grid, neighbor, visited, dim, camefrom)
+
+def DFS(draw,grid,start,dim):
+    visited = set()
+    stack = [start]
+    came_from = {}
+    while stack:
+        for node in stack:
+            print('[' + str(node.row) + ']' + ' [' + str(node.col) + ']' + ' ' + str(node.color))
+
+        print("\n")
+        node = stack.pop()
+        print("exploring:"+'[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
+        if node.row == dim-1 and node.col == dim-1:
+            reconstruct_path(came_from,node,draw)
+            break
+        if node not in visited:
+            visited.add(node)
+            # node.set_current()
+            draw()
+        for neighbor in node.neighbors:
+            if neighbor not in visited:
+                stack.append(neighbor)
+                came_from[neighbor] = node
+
+
+    return True
 
 def main(win, width, dimension, prob):
     dim = dimension
     p = prob
     density = (dim ** 2) * p
-
     grid = create_grid(dim, width)
 
     start = grid[0][0].set_start()
@@ -86,7 +128,7 @@ def main(win, width, dimension, prob):
         density -= 1
         cnt += 1
         print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
-    printgrid(grid, dim)
+
     print("Maze Created Now Generating...")
     '''
     #testign neighbors
@@ -108,7 +150,7 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, origin)
+                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
     pygame.quit()
 
 
