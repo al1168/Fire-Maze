@@ -12,6 +12,23 @@ WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("A* Path Finding Algorithm")
 
 
+class Queue:
+
+    def __init__(self):
+        self.queue = []
+
+    def enqueue(self, item):
+        self.queue.append(item)
+
+    def dequeue(self):
+        if len(self.queue) < 1:
+            return None
+        return self.queue.pop(0)
+
+    def size(self):
+        return len(self.queue)
+
+
 def create_grid(rows, width):
     grid = []
     gap = width // rows
@@ -104,6 +121,31 @@ def DFS(draw, grid, start, dim):
     return True
 
 
+def BFS(draw, grid, start, dim):
+    queue = Queue()
+    visited = set()
+    queue.enqueue(start)
+    visited.add(start)
+
+    came_from = {}
+    cnt = 0
+    while queue.size()>0:
+        curr = queue.dequeue()
+        cnt += 1
+        print(cnt)
+        print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
+        if curr.row == dim - 1 and curr.col == dim - 1:
+            reconstruct_path(came_from, curr, draw)
+            break
+        for neighbor in curr.neighbors:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.enqueue(neighbor)
+                came_from[neighbor] = curr
+    return True
+
+
+
 def main(win, width, dimension, prob):
     dim = dimension
     p = prob
@@ -150,7 +192,8 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    # DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
     pygame.quit()
 
 
