@@ -111,6 +111,8 @@ def DFS(draw, grid, start, dim):
             break
         if node not in visited:
             visited.add(node)
+            node.set_color()
+            draw()
             # node.set_current()
             draw()
         for neighbor in node.neighbors:
@@ -129,7 +131,7 @@ def BFS(draw, grid, start, dim):
 
     came_from = {}
     cnt = 0
-    while queue.size()>0:
+    while queue.size() > 0:
         curr = queue.dequeue()
         cnt += 1
         print(cnt)
@@ -139,10 +141,21 @@ def BFS(draw, grid, start, dim):
             break
         for neighbor in curr.neighbors:
             if neighbor not in visited:
+                neighbor.set_color()
+                draw()
                 visited.add(neighbor)
                 queue.enqueue(neighbor)
                 came_from[neighbor] = curr
     return True
+
+
+def heuristic(start, end):
+    euclidean_distance = math.sqrt((start.row - end.row) ** 2 + (start.col - end.col) ** 2)
+    return euclidean_distance
+
+
+def astar(draw, grid, start, dim):
+    came_from = {}
 
 
 
@@ -154,6 +167,7 @@ def main(win, width, dimension, prob):
 
     start = grid[0][0].set_start()
     origin = grid[0][0]
+    end = grid[dim - 1][dim - 1]
     target = grid[dim - 1][dim - 1].set_target()
 
     cnt = 0
@@ -194,6 +208,7 @@ def main(win, width, dimension, prob):
                             cell.update_neighbors(grid)
                     # DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
                     BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+
     pygame.quit()
 
 
