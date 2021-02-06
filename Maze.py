@@ -29,6 +29,22 @@ class Queue:
         return len(self.queue)
 
 
+class StackFringe:
+    def __init__(self):
+        self.stack = []
+
+    def is_empty(self):
+        return len(self.stack) == 0
+
+    def pop(self):
+        return self.stack.pop()
+
+    def push(self, loc):
+        if loc in self.stack:
+            return
+        else:
+            return self.stack.append(loc)
+
 def create_grid(rows, width):
     grid = []
     gap = width // rows
@@ -76,11 +92,14 @@ def draw(win, grid, rows, width):
 
 
 def reconstruct_path(came_from, current, draw):
+    cnt = 0
     while current in came_from:
+        cnt += 1
         current = came_from[current]
+        print("printing:" + '[' + str(current.row) + ']' + ' [' + str(current.col) + ']')
         current.set_path()
         draw()
-
+        print(cnt)
 
 # def DFSuntil(draw, grid, node, visited, dim, camefrom):
 #     if node.row == dim - 1 and node.col == dim - 1:
@@ -97,37 +116,31 @@ def reconstruct_path(came_from, current, draw):
 
 def DFS(draw, grid, start, dim):
     visited = set()
-    stack = []
-    stack.append(start)
+    # stack = [start]
+    stack = StackFringe()
+    stack.push(start)
     came_from = {}
-    while stack:
-        for node in stack:
-            print('[' + str(node.row) + ']' + ' [' + str(node.col) + ']' + ' ' + str(node.color))
-
-        print("\n")
+    while not stack.is_empty():
         node = stack.pop()
         print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
         if node.row == dim - 1 and node.col == dim - 1:
+            # print(len(came_from))
             reconstruct_path(came_from, node, draw)
             break
-        '''
+
         if node not in visited:
             visited.add(node)
-            #node.set_color()
-            #node.set_current()
-            #draw()
-        '''
+            node.set_current()
+            draw()
+
         for neighbor in node.neighbors:
             if neighbor not in visited:
-                if 
-                #neighbor.set_color()
-                #draw()
-                #visited.add(neighbor)
-                stack.append(neighbor)
+                neighbor.set_color()
+                draw()
+                stack.push(neighbor)
                 came_from[neighbor] = node
 
     return True
-
 
 def BFS(draw, grid, start, dim):
     queue = Queue()
@@ -139,6 +152,7 @@ def BFS(draw, grid, start, dim):
     cnt = 0
     while queue.size() > 0:
         curr = queue.dequeue()
+        curr.set_current()
         cnt += 1
         print(cnt)
         print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
@@ -212,8 +226,8 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
-                    #BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    #DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
 
     pygame.quit()
 
