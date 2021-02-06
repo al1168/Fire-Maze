@@ -97,7 +97,8 @@ def reconstruct_path(came_from, current, draw):
 
 def DFS(draw, grid, start, dim):
     visited = set()
-    stack = [start]
+    stack = []
+    stack.append(start)
     came_from = {}
     while stack:
         for node in stack:
@@ -109,14 +110,19 @@ def DFS(draw, grid, start, dim):
         if node.row == dim - 1 and node.col == dim - 1:
             reconstruct_path(came_from, node, draw)
             break
+        '''
         if node not in visited:
             visited.add(node)
-            node.set_color()
-            draw()
-            # node.set_current()
-            draw()
+            #node.set_color()
+            #node.set_current()
+            #draw()
+        '''
         for neighbor in node.neighbors:
             if neighbor not in visited:
+                if 
+                #neighbor.set_color()
+                #draw()
+                #visited.add(neighbor)
                 stack.append(neighbor)
                 came_from[neighbor] = node
 
@@ -206,8 +212,8 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    # DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
-                    BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    #BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
 
     pygame.quit()
 
