@@ -222,12 +222,18 @@ def main(win, width, dimension, prob):
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and origin:
+                #BFS
+                if event.key == ord('b') and origin:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    #DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
                     BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                #DFS
+                if event.key == ord('d') and origin:
+                    for row in grid:
+                        for cell in row:
+                            cell.update_neighbors(grid)
+                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
 
     pygame.quit()
 
