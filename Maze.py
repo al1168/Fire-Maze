@@ -229,6 +229,7 @@ def main(win, width, dimension, prob):
                     # DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
                     BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
 
+
     pygame.quit()
 
 
