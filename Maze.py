@@ -178,13 +178,7 @@ def astar(draw, grid, start, dim):
     came_from = {}
 
 
-
-def main(win, width, dimension, prob):
-    dim = dimension
-    p = prob
-    density = (dim ** 2) * p
-    grid = create_grid(dim, width)
-
+def generate_maze(grid, dim, p, density):
     start = grid[0][0].set_start()
     origin = grid[0][0]
     end = grid[dim - 1][dim - 1]
@@ -200,12 +194,20 @@ def main(win, width, dimension, prob):
         if cell.is_start or cell.is_target or cell.is_blocked():
             continue
         cell.set_blocked()
-        print(cell.color)
+        #print(cell.color)
         density -= 1
         cnt += 1
-        print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
+        #print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
 
-    print("Maze Created Now Generating...")
+
+def main(win, width, dimension, prob):
+    dim = dimension
+    p = prob
+    density = (dim ** 2) * p
+    grid = create_grid(dim, width)
+
+    generate_maze(grid, dim, p, density)
+    print("Maze is generated")
     '''
     #testign neighbors
     testCell = grid[1][2]
@@ -222,20 +224,40 @@ def main(win, width, dimension, prob):
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and grid[0][0]:
+                    for row in grid:
+                        for cell in row:
+                            cell.color = Node.WHITE
+
+                    generate_maze(grid, dim, p, density)
+                    print("Maze is generated")
+
                 #BFS
-                if event.key == ord('b') and origin:
+                if event.key == ord('b') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    BFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    print("BFS completed")
                 #DFS
-                if event.key == ord('d') and origin:
+                if event.key == ord('d') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, origin, dim)
+                    DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    print("DFS completed")
+                #Reset
+                if event.key == pygame.K_RETURN:
+                    for row in grid:
+                        for cell in row:
+                            if cell.is_start or cell.is_target or cell.is_blocked():
+                                continue
+                            #if cell.color == Node.TURQUOISE or cell.color == Node.PURPLE:
+                            cell.color = Node.WHITE
+                    print("Maze Reset")
 
     pygame.quit()
+
 
 
 if __name__ == '__main__':
