@@ -5,6 +5,7 @@ from queue import PriorityQueue
 import random
 import Node
 from algo import BFS, DFS, astar
+
 pygame.display.set_caption("CS440 Proj1")
 
 WIDTH = 800
@@ -233,21 +234,30 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
-                    print("BFS completed")
+                    ret = BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    if ret == True:
+                        print("BFS completed")
+                    else:
+                        print("BFS Path does not exist")
                 # DFS
                 if event.key == ord('d') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
-                    print("DFS completed")
+                    ret = DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    if ret == True:
+                        print("DFS completed")
+                    else:
+                        print("DFS Path does not exist")
                 if event.key == ord('a') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim-1][dim-1])
-                    print("Astar completed")
+                    ret = astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim-1][dim-1])
+                    if ret == True:
+                        print("Astar completed")
+                    else:
+                        print("Astar Path does not exist")
                 # Reset
                 if event.key == pygame.K_RETURN:
                     for row in grid:

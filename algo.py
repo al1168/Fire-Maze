@@ -1,5 +1,7 @@
+
 from queue import PriorityQueue
 import math
+import Node
 
 class Queue:
 
@@ -58,7 +60,7 @@ def DFS(draw, grid, start, dim):
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
             reconstruct_path(came_from, node, draw)
-            break
+            return True
 
         if node not in visited:
             visited.add(node)
@@ -72,7 +74,7 @@ def DFS(draw, grid, start, dim):
                 stack.push(neighbor)
                 came_from[neighbor] = node
 
-    return True
+    return False
 
 
 def BFS(draw, grid, start, dim):
@@ -91,7 +93,7 @@ def BFS(draw, grid, start, dim):
         print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
         if curr.row == dim - 1 and curr.col == dim - 1:
             reconstruct_path(came_from, curr, draw)
-            break
+            return True
         for neighbor in curr.neighbors:
             if neighbor not in visited:
                 neighbor.set_color()
@@ -99,7 +101,8 @@ def BFS(draw, grid, start, dim):
                 visited.add(neighbor)
                 queue.enqueue(neighbor)
                 came_from[neighbor] = curr
-    return True
+
+    return False
 
 
 def heuristic(start, end):
@@ -135,3 +138,5 @@ def astar(draw, grid, start, dim, end):
         draw()
         if curr != start:
             curr.set_closed()
+
+    return false
