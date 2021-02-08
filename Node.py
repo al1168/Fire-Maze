@@ -71,7 +71,7 @@ class Cell:
     def set_color(self):
         self.color = TURQUOISE
 
-    def set_current(self):
+    def set_explored(self):
         self.color = ORANGE
 
     def draw(self, win):
