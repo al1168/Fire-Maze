@@ -66,7 +66,9 @@ def DFS(draw, grid, start, dim):
         #print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
-            reconstruct_path(came_from, node, draw)
+            path = reconstruct_path(came_from, node, draw)
+            print(str(len(path))+ " in path")
+            print(str(len(visited))+" explored")
             return True
 
         if node not in visited:
@@ -78,6 +80,7 @@ def DFS(draw, grid, start, dim):
                 stack.push(neighbor)
                 came_from[neighbor] = node
     draw()
+    print(str(len(visited)-1)+" explored")
     return False
 
 
@@ -95,7 +98,9 @@ def BFS(draw, grid, start, dim):
         #print(cnt)
         #print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
         if curr.row == dim - 1 and curr.col == dim - 1:
-            reconstruct_path(came_from, curr, draw)
+            path = reconstruct_path(came_from, curr, draw)
+            print(str(len(path))+ " in path")
+            print(str(len(visited))+" explored")
             return True
 
         for neighbor in curr.neighbors:
@@ -106,6 +111,7 @@ def BFS(draw, grid, start, dim):
                 came_from[neighbor] = curr
 
     draw()
+    print(str(len(visited)-1)+" explored")
     return False
 
 
@@ -127,7 +133,9 @@ def astar(draw, grid, start, dim, target):
         curr = open_list.get()[1]
         curr.set_explored()
         if curr == target:
-            reconstruct_path(came_from, curr, draw)
+            path = reconstruct_path(came_from, curr, draw)
+            print(str(len(path))+ " in path")
+            print(str(len(closed_list))+" explored")
             return True
 
         for neighbor in curr.neighbors:
@@ -145,4 +153,5 @@ def astar(draw, grid, start, dim, target):
         if curr != start:
             curr.set_closed()
 
+    print(str(len(closed_list))+" explored")
     return False
