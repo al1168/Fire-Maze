@@ -1,10 +1,14 @@
-
 from queue import PriorityQueue
 import math
 import Node
 
-ExploredNodes = []
-Path = []
+DATA = []
+
+class Data:
+    def __init__(self):
+        self.path = 0
+        self.explored = 0
+        self.graph_type = ""
 
 class Queue:
 
@@ -54,7 +58,11 @@ def reconstruct_path(came_from, current, draw):
 
     return path
 
+
+
 def DFS(draw, grid, start, dim):
+
+    my_data = Data()
     visited = set()
     # stack = [start]
     stack = StackFringe()
@@ -67,6 +75,11 @@ def DFS(draw, grid, start, dim):
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
             path = reconstruct_path(came_from, node, draw)
+            my_data.graph_type = "DFS"
+            my_data.path = len(path)
+            my_data.explored = len(visited)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
             print(str(len(path))+ " in path")
             print(str(len(visited))+" explored")
             return True
@@ -81,10 +94,20 @@ def DFS(draw, grid, start, dim):
                 came_from[neighbor] = node
     draw()
     print(str(len(visited)-1)+" explored")
+    #EXPLORED.append(len(visited) - 1)
+    #DATA["DFS"] = [0, len(visited) - 1]
+
+
+    my_data.graph_type = "DFS"
+    my_data.path = 0-1
+    my_data.explored = len(visited)-1
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
     return False
 
 
 def BFS(draw, grid, start, dim):
+    my_data = Data()
     queue = Queue()
     visited = set()
     queue.enqueue(start)
@@ -99,6 +122,12 @@ def BFS(draw, grid, start, dim):
         #print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
         if curr.row == dim - 1 and curr.col == dim - 1:
             path = reconstruct_path(came_from, curr, draw)
+
+            my_data.graph_type = "BFS"
+            my_data.path = len(path)
+            my_data.explored = len(visited)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
             print(str(len(path))+ " in path")
             print(str(len(visited))+" explored")
             return True
@@ -112,6 +141,12 @@ def BFS(draw, grid, start, dim):
 
     draw()
     print(str(len(visited)-1)+" explored")
+
+    my_data.graph_type = "BFS"
+    my_data.path = 0
+    my_data.explored = len(visited)-1
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
     return False
 
 
@@ -121,6 +156,7 @@ def heuristic(start, end):
 
 
 def astar(draw, grid, start, dim, target):
+    my_data = Data()
     came_from = {}
     closed_list = []
     open_list = PriorityQueue()
@@ -134,6 +170,12 @@ def astar(draw, grid, start, dim, target):
         curr.set_explored()
         if curr == target:
             path = reconstruct_path(came_from, curr, draw)
+
+            my_data.graph_type = "Astar"
+            my_data.path = len(path)
+            my_data.explored = len(closed_list)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
             print(str(len(path))+ " in path")
             print(str(len(closed_list))+" explored")
             return True
@@ -154,4 +196,10 @@ def astar(draw, grid, start, dim, target):
             curr.set_closed()
 
     print(str(len(closed_list))+" explored")
+
+    my_data.graph_type = "Astar"
+    my_data.path = 0
+    my_data.explored = len(closed_list)
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
     return False

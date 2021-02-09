@@ -5,6 +5,7 @@ from queue import PriorityQueue
 import random
 import Node
 from algo import BFS, DFS, astar
+import algo
 
 pygame.display.set_caption("CS440 Proj1")
 
@@ -153,3 +154,6 @@ if __name__ == '__main__':
     dimension = int(sys.argv[1])
     prob = float(sys.argv[2])
     main(WIN, WIDTH, dimension, prob)
+
+    print("\nData:")
+    print(algo.DATA)
