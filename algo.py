@@ -1,5 +1,16 @@
 from queue import PriorityQueue
 import math
+import Node
+
+DATA = []
+
+
+class Data:
+    def __init__(self):
+        self.path = 0
+        self.explored = 0
+        self.graph_type = ""
+
 
 class Queue:
 
@@ -36,17 +47,22 @@ class StackFringe:
 
 
 def reconstruct_path(came_from, current, draw):
+    path = []
     cnt = 0
     while current in came_from:
         cnt += 1
         current = came_from[current]
-        print("printing:" + '[' + str(current.row) + ']' + ' [' + str(current.col) + ']')
+        # print("printing:" + '[' + str(current.row) + ']' + ' [' + str(current.col) + ']')
         current.set_path()
+        path.append(current.get_pos())
         draw()
-        print(cnt)
+        # print(cnt)
+
+    return path
 
 
 def DFS(draw, grid, start, dim):
+    my_data = Data()
     visited = set()
     # stack = [start]
     stack = StackFringe()
@@ -54,28 +70,43 @@ def DFS(draw, grid, start, dim):
     came_from = {}
     while not stack.is_empty():
         node = stack.pop()
-        print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
+        node.set_color()
+        # print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
-            reconstruct_path(came_from, node, draw)
-            break
+            path = reconstruct_path(came_from, node, draw)
+            my_data.graph_type = "DFS"
+            my_data.path = len(path)
+            my_data.explored = len(visited)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+            print(str(len(path)) + " in path")
+            print(str(len(visited)) + " explored")
+            return True
 
         if node not in visited:
             visited.add(node)
-            node.set_current()
-            draw()
+            node.set_explored()
 
         for neighbor in node.neighbors:
             if neighbor not in visited:
-                neighbor.set_color()
-                draw()
                 stack.push(neighbor)
                 came_from[neighbor] = node
+    draw()
+    print(str(len(visited) - 1) + " explored")
+    # EXPLORED.append(len(visited) - 1)
+    # DATA["DFS"] = [0, len(visited) - 1]
 
-    return True
+    my_data.graph_type = "DFS"
+    my_data.path = 0 - 1
+    my_data.explored = len(visited) - 1
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+    return False
 
 
 def BFS(draw, grid, start, dim):
+    my_data = Data()
     queue = Queue()
     visited = set()
     queue.enqueue(start)
@@ -85,21 +116,37 @@ def BFS(draw, grid, start, dim):
     cnt = 0
     while queue.size() > 0:
         curr = queue.dequeue()
-        curr.set_current()
         cnt += 1
-        print(cnt)
-        print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
+        # print(cnt)
+        # print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
         if curr.row == dim - 1 and curr.col == dim - 1:
-            reconstruct_path(came_from, curr, draw)
-            break
+            path = reconstruct_path(came_from, curr, draw)
+
+            my_data.graph_type = "BFS"
+            my_data.path = len(path)
+            my_data.explored = len(visited)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+            print(str(len(path)) + " in path")
+            print(str(len(visited)) + " explored")
+            return True
+
         for neighbor in curr.neighbors:
             if neighbor not in visited:
-                neighbor.set_color()
-                draw()
+                neighbor.set_explored()
                 visited.add(neighbor)
                 queue.enqueue(neighbor)
                 came_from[neighbor] = curr
-    return True
+
+    draw()
+    print(str(len(visited) - 1) + " explored")
+
+    my_data.graph_type = "BFS"
+    my_data.path = 0
+    my_data.explored = len(visited) - 1
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+    return False
 
 
 def heuristic(start, end):
@@ -107,7 +154,8 @@ def heuristic(start, end):
     return euclidean_distance
 
 
-def astar(draw, grid, start, dim, end):
+def astar(draw, grid, start, dim, target):
+    my_data = Data()
     came_from = {}
     closed_list = []
     open_list = PriorityQueue()
@@ -115,11 +163,20 @@ def astar(draw, grid, start, dim, end):
     g_score = {Node: float("inf") for row in grid for Node in row}
     g_score[start] = 0
     f_score = {Node: float("inf") for row in grid for Node in row}
-    f_score[start] = heuristic(start, end)
+    f_score[start] = heuristic(start, target)
     while not open_list.empty():
         curr = open_list.get()[1]
-        if curr == end:
-            reconstruct_path(came_from, curr, draw)
+        curr.set_explored()
+        if curr == target:
+            path = reconstruct_path(came_from, curr, draw)
+
+            my_data.graph_type = "Astar"
+            my_data.path = len(path)
+            my_data.explored = len(closed_list)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+            print(str(len(path)) + " in path")
+            print(str(len(closed_list)) + " explored")
             return True
 
         for neighbor in curr.neighbors:
@@ -127,11 +184,20 @@ def astar(draw, grid, start, dim, end):
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = curr
                 g_score[neighbor] = temp_g_score
-                f_score[neighbor] = temp_g_score + heuristic(neighbor, end)
+                f_score[neighbor] = temp_g_score + heuristic(neighbor, target)
                 if neighbor not in closed_list:
                     open_list.put((f_score[neighbor], neighbor))
                     closed_list.append(neighbor)
-                    neighbor.set_color()
+
         draw()
         if curr != start:
             curr.set_closed()
+
+    print(str(len(closed_list)) + " explored")
+
+    my_data.graph_type = "Astar"
+    my_data.path = 0
+    my_data.explored = len(closed_list)
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+    return False

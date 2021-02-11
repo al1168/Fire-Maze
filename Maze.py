@@ -5,7 +5,10 @@ from queue import PriorityQueue
 import random
 import Node
 from algo import BFS, DFS, astar
+
 from copy import copy, deepcopy
+
+import algo
 
 pygame.display.set_caption("CS440 Proj1")
 
@@ -93,8 +96,8 @@ def advance_fire_one_step(grid, q):
             print(probability)
             print(random_num)
             if random_num <= probability:
-                grid_copy[cell.row][cell.col].set_on_fire()
-                print('[' + str(cell.row) + ']' + ' [' + str(cell.col)+']')
+                grid[cell.row][cell.col].set_on_fire()
+                print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
 
     return grid_copy
 
@@ -104,6 +107,8 @@ def generate_maze(grid, dim, p, density):
     origin = grid[0][0]
     end = grid[dim - 1][dim - 1]
     target = grid[dim - 1][dim - 1].set_target()
+
+    blockedCount = 0
 
     cnt = 0
     while density > 0:
@@ -115,10 +120,12 @@ def generate_maze(grid, dim, p, density):
         if cell.is_start or cell.is_target or cell.is_blocked():
             continue
         cell.set_blocked()
+        blockedCount += 1
         # print(cell.color)
         density -= 1
         cnt += 1
         # print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
+    print(str(blockedCount) + " blocked cells")
 
 
 def reset(grid):
@@ -159,7 +166,7 @@ def main(win, width, dimension, prob):
                         for cell in row:
                             cell.color = Node.WHITE
                     generate_maze(grid, dim, p, density)
-                    print("Maze is generated")
+                    print("Maze is generated\n \n ")
 
                 # BFS
                 if event.key == ord('b') and grid[0][0]:
@@ -167,35 +174,43 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
-                    print("BFS completed")
+                    ret = BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    if ret == True:
+                        print("BFS completed")
+                    else:
+                        print("BFS Path does not exist")
                 # DFS
                 if event.key == ord('d') and grid[0][0]:
                     reset(grid)
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
-                    print("DFS completed")
-                # astar
+                    # astar
+
+                    ret = DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+                    if ret == True:
+                        print("DFS completed")
+                    else:
+                        print("DFS Path does not exist")
                 if event.key == ord('a') and grid[0][0]:
                     reset(grid)
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim - 1][dim - 1])
-                    print("Astar completed")
+                    ret = astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim - 1][dim - 1])
+                    if ret == True:
+                        print("Astar completed")
+                    else:
+                        print("Astar Path does not exist")
                 if event.key == ord('f') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    random_row = random.randrange(dim)
-                    random_col = random.randrange(dim)
-                    if not grid[random_row][random_col].is_blocked()  and not grid[random_row][random_col].is_on_fire():
-                        grid[random_row][random_col].set_on_fire()
-                    b = advance_fire_one_step(grid, 1)
-
-                # Reset
+                        rand_row = random.randrange(dim)
+                        rand_col = random.randrange(dim)
+                    if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                        grid[rand_row][rand_col].set_on_fire()
+                    b = advance_fire_one_step(grid, 0.12)
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
@@ -203,7 +218,31 @@ def main(win, width, dimension, prob):
     pygame.quit()
 
 
+def generate_data(win, width, dimension, prob):
+    dim = dimension
+    p = prob
+    density = (dim ** 2) * p
+    grid = create_grid(dim, width)
+
+    generate_maze(grid, dim, p, density)
+
+    print("Generating data starting...")
+
+    # draw(win, grid, dim, width)
+    for i in range(0, 10):
+        BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
+        generate_maze(grid, dim, p, density)
+        print(str(i) + "trial done")
+
+    # pygame.quit()
+
+    print("Generation complete")
+
+
 if __name__ == '__main__':
     dimension = int(sys.argv[1])
     prob = float(sys.argv[2])
     main(WIN, WIDTH, dimension, prob)
+    # generate_data(WIN, WIDTH, dimension, prob)
+    print("\nData:")
+    print(algo.DATA)
