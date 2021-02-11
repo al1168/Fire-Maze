@@ -71,7 +71,7 @@ plt.ylabel("Average Cells Explored")
 '''
 
 #Question 4 Bar Chart
-x_q4 = np.array(["DFS", "BFS", "A*"])
+x_q4 = np.array(["A*", "BFS", "DFS"])
 y_q4 = np.array([230, 255, 310])
 
 plt.bar(x_q4,y_q4)
@@ -79,5 +79,5 @@ plt.bar(x_q4,y_q4)
 plt.xlabel("Algorithm")
 plt.ylabel("Dimension")
 
-#plt.show()
-plt.savefig('img/q4img1.png', dpi=1000)
+plt.show()
+#plt.savefig('img/q4img1.png', dpi=1000)
