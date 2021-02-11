@@ -5,25 +5,13 @@ from queue import PriorityQueue
 import random
 import Node
 from algo import BFS, DFS, astar
+from copy import copy, deepcopy
+
 pygame.display.set_caption("CS440 Proj1")
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("A* Path Finding Algorithm")
-
-
-
-
-def create_grid(rows, width):
-    grid = []
-    gap = width // rows
-    for i in range(rows):
-        grid.append([])
-        for j in range(rows):
-            cell = Node.Cell(i, j, gap, rows)
-            grid[i].append(cell)
-
-    return grid
+pygame.display.set_caption(" Path Finding Algorithm")
 
 
 def printgrid(grid, rows):
@@ -31,6 +19,7 @@ def printgrid(grid, rows):
         for j in range(rows):
             cell = grid[i][j]
             print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.color))
+            # print(str(cell.color))
 
 
 def draw_grid(win, rows, width):
@@ -52,127 +41,63 @@ def draw(win, grid, rows, width):
     pygame.display.update()
 
 
-# def DFS(draw, grid, start, dim):
-#     visited = set()
-#     camefrom = {}
-#
-#     path = DFSuntil(draw, grid, start, visited, dim, camefrom)
-#     return path
+def create_grid(rows, width):
+    grid = []
+    gap = width // rows
+    for i in range(rows):
+        grid.append([])
+        for j in range(rows):
+            cell = Node.Cell(i, j, gap, rows)
+            grid[i].append(cell)
 
-#
-# def reconstruct_path(came_from, current, draw):
-#     cnt = 0
-#     while current in came_from:
-#         cnt += 1
-#         current = came_from[current]
-#         print("printing:" + '[' + str(current.row) + ']' + ' [' + str(current.col) + ']')
-#         current.set_path()
-#         draw()
-#         print(cnt)
+    return grid
 
 
-# def DFSuntil(draw, grid, node, visited, dim, camefrom):
-#     if node.row == dim - 1 and node.col == dim - 1:
-#         reconstruct_path(camefrom, node, draw)
-#         return True
-#
-#     visited.add(node)
-#     for neighbor in node.neighbors:
-#         if neighbor not in visited:
-#             camefrom[neighbor] = node
-#             neighbor.set_color()
-#             draw()
-#             DFSuntil(draw, grid, neighbor, visited, dim, camefrom)
+def copy_grid(grid):
+    num_row = len(grid)
+    grid_copy = []
+    for i in range(num_row):
+        grid_copy.append([])
+        for j in range(num_row):
+            curr = grid[i][j]
+            cell = Node.Cell(i, j, curr.width, curr.total_rows)
+            cell.color = curr.color
+            cell.x = curr.x
+            cell.y = curr.y
+            cell.is_start = curr.is_start
+            cell.is_target = curr.is_target
+            cell.is_blocked = curr.is_blocked
+            cell.is_closed = curr.is_closed
+            cell.is_on_fire = curr.is_on_fire
+            grid_copy[i].append(cell)
+    for row in grid:
+        for cell in row:
+            cell.update_neighbors(grid_copy)
+    return grid_copy
 
-# def DFS(draw, grid, start, dim):
-#     visited = set()
-#     # stack = [start]
-#     stack = StackFringe()
-#     stack.push(start)
-#     came_from = {}
-#     while not stack.is_empty():
-#         node = stack.pop()
-#         print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
-#         if node.row == dim - 1 and node.col == dim - 1:
-#             # print(len(came_from))
-#             reconstruct_path(came_from, node, draw)
-#             break
-#
-#         if node not in visited:
-#             visited.add(node)
-#             node.set_current()
-#             draw()
-#
-#         for neighbor in node.neighbors:
-#             if neighbor not in visited:
-#                 neighbor.set_color()
-#                 draw()
-#                 stack.push(neighbor)
-#                 came_from[neighbor] = node
-#
-#     return True
-#
-#
-# def BFS(draw, grid, start, dim):
-#     queue = Queue()
-#     visited = set()
-#     queue.enqueue(start)
-#     visited.add(start)
-#
-#     came_from = {}
-#     cnt = 0
-#     while queue.size() > 0:
-#         curr = queue.dequeue()
-#         curr.set_current()
-#         cnt += 1
-#         print(cnt)
-#         print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.color))
-#         if curr.row == dim - 1 and curr.col == dim - 1:
-#             reconstruct_path(came_from, curr, draw)
-#             break
-#         for neighbor in curr.neighbors:
-#             if neighbor not in visited:
-#                 neighbor.set_color()
-#                 draw()
-#                 visited.add(neighbor)
-#                 queue.enqueue(neighbor)
-#                 came_from[neighbor] = curr
-#     return True
-#
-#
-# def heuristic(start, end):
-#     euclidean_distance = math.sqrt((start.row - end.row) ** 2 + (start.col - end.col) ** 2)
-#     return euclidean_distance
-#
-#
-# def astar(draw, grid, start, dim, end):
-#     came_from = {}
-#     closed_list = []
-#     open_list = PriorityQueue()
-#     open_list.put((0, start))
-#     g_score = {Node: float("inf") for row in grid for Node in row}
-#     g_score[start] = 0
-#     f_score = {Node: float("inf") for row in grid for Node in row}
-#     f_score[start] = heuristic(start, end)
-#     while not open_list.empty():
-#         curr = open_list.get()[1]
-#         if curr == end:
-#             reconstruct_path(came_from, curr, draw)
-#             return True
-#
-#         for neighbor in curr.neighbors:
-#             temp_g_score = g_score[curr] + 1
-#             if temp_g_score < g_score[neighbor]:
-#                 came_from[neighbor] = curr
-#                 g_score[neighbor] = temp_g_score
-#                 f_score[neighbor] = temp_g_score + heuristic(neighbor, end)
-#                 if neighbor not in closed_list:
-#                     open_list.put((f_score[neighbor], neighbor))
-#                     closed_list.append(neighbor)
-#                     neighbor.set_color()
-#         draw()
-#         if curr!= start:
-#             curr.set_closed()
+
+def advance_fire_one_step(grid, q):
+    grid_copy = copy_grid(grid)
+
+    for row in grid:
+        for cell in row:
+            k = 0
+            if cell.color == Node.WHITE:
+                for neighbor in cell.neighbors:
+                    # print(neighbor.color)
+                    if neighbor.is_on_fire():
+                        k += 1
+            probability = 1 - ((1 - q) ** k)
+            random_num = random.uniform(0, 1)
+            print(k)
+            print(probability)
+            print(random_num)
+            if random_num <= probability:
+                grid_copy[cell.row][cell.col].set_on_fire()
+                print('[' + str(cell.row) + ']' + ' [' + str(cell.col)+']')
+
+    return grid_copy
+
 
 def generate_maze(grid, dim, p, density):
     start = grid[0][0].set_start()
@@ -194,6 +119,15 @@ def generate_maze(grid, dim, p, density):
         density -= 1
         cnt += 1
         # print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
+
+
+def reset(grid):
+    for row in grid:
+        for cell in row:
+            if cell.is_start or cell.is_target or cell.is_blocked():
+                continue
+            # if cell.color == Node.TURQUOISE or cell.color == Node.PURPLE:
+            cell.color = Node.WHITE
 
 
 def main(win, width, dimension, prob):
@@ -224,12 +158,12 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.color = Node.WHITE
-
                     generate_maze(grid, dim, p, density)
                     print("Maze is generated")
 
                 # BFS
                 if event.key == ord('b') and grid[0][0]:
+                    reset(grid)
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
@@ -237,25 +171,33 @@ def main(win, width, dimension, prob):
                     print("BFS completed")
                 # DFS
                 if event.key == ord('d') and grid[0][0]:
+                    reset(grid)
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
                     DFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
                     print("DFS completed")
+                # astar
                 if event.key == ord('a') and grid[0][0]:
+                    reset(grid)
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim-1][dim-1])
+                    astar(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim, grid[dim - 1][dim - 1])
                     print("Astar completed")
-                # Reset
-                if event.key == pygame.K_RETURN:
+                if event.key == ord('f') and grid[0][0]:
                     for row in grid:
                         for cell in row:
-                            if cell.is_start or cell.is_target or cell.is_blocked():
-                                continue
-                            # if cell.color == Node.TURQUOISE or cell.color == Node.PURPLE:
-                            cell.color = Node.WHITE
+                            cell.update_neighbors(grid)
+                    random_row = random.randrange(dim)
+                    random_col = random.randrange(dim)
+                    if not grid[random_row][random_col].is_blocked()  and not grid[random_row][random_col].is_on_fire():
+                        grid[random_row][random_col].set_on_fire()
+                    b = advance_fire_one_step(grid, 1)
+
+                # Reset
+                if event.key == pygame.K_RETURN:
+                    reset(grid)
                     print("Maze Reset")
 
     pygame.quit()

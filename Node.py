@@ -22,7 +22,6 @@ class Cell:
         self.is_start = False
         self.is_target = False
         self.is_closed = False
-        self.is_on_fire = RED
         self.neighbors = []
         self.width = width
         self.total_rows = total_rows
