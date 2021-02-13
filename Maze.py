@@ -5,9 +5,7 @@ from queue import PriorityQueue
 import random
 import Node
 from algo import BFS, DFS, astar
-
 from copy import copy, deepcopy
-
 import algo
 
 pygame.display.set_caption("CS440 Proj1")
@@ -34,7 +32,7 @@ def draw_grid(win, rows, width):
 
 
 def draw(win, grid, rows, width):
-    win.fill(Node.WHITE)
+    win.fill(Node.OPEN)
 
     for row in grid:
         for cell in row:
@@ -117,7 +115,7 @@ def generate_maze(grid, dim, p, density):
         cell = grid[x][y]
         if cnt == (dim * dim) - 2:  # if the entire maze is blocked
             break
-        if cell.is_start or cell.is_target or cell.is_blocked():
+        if cell.is_start() or cell.is_target() or cell.is_blocked():
             continue
         cell.set_blocked()
         blockedCount += 1
@@ -131,10 +129,9 @@ def generate_maze(grid, dim, p, density):
 def reset(grid):
     for row in grid:
         for cell in row:
-            if cell.is_start or cell.is_target or cell.is_blocked():
+            if cell.is_start() or cell.is_target() or cell.is_blocked():
                 continue
-            # if cell.color == Node.TURQUOISE or cell.color == Node.PURPLE:
-            cell.color = Node.WHITE
+            cell.state = Node.OPEN
 
 
 def main(win, width, dimension, prob):
@@ -164,7 +161,7 @@ def main(win, width, dimension, prob):
                 if event.key == pygame.K_SPACE and grid[0][0]:
                     for row in grid:
                         for cell in row:
-                            cell.color = Node.WHITE
+                            cell.state = Node.OPEN
                     generate_maze(grid, dim, p, density)
                     print("Maze is generated\n \n ")
 
@@ -218,31 +215,10 @@ def main(win, width, dimension, prob):
     pygame.quit()
 
 
-def generate_data(win, width, dimension, prob):
-    dim = dimension
-    p = prob
-    density = (dim ** 2) * p
-    grid = create_grid(dim, width)
-
-    generate_maze(grid, dim, p, density)
-
-    print("Generating data starting...")
-
-    # draw(win, grid, dim, width)
-    for i in range(0, 10):
-        BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
-        generate_maze(grid, dim, p, density)
-        print(str(i) + "trial done")
-
-    # pygame.quit()
-
-    print("Generation complete")
-
 
 if __name__ == '__main__':
     dimension = int(sys.argv[1])
     prob = float(sys.argv[2])
     main(WIN, WIDTH, dimension, prob)
-    # generate_data(WIN, WIDTH, dimension, prob)
     print("\nData:")
     print(algo.DATA)

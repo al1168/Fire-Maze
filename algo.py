@@ -45,7 +45,7 @@ class StackFringe:
         else:
             return self.stack.append(loc)
 
-
+#return a list of path nodes
 def reconstruct_path(came_from, current, draw):
     path = []
     cnt = 0
@@ -70,7 +70,7 @@ def DFS(draw, grid, start, dim):
     came_from = {}
     while not stack.is_empty():
         node = stack.pop()
-        node.set_color()
+        #node.set_color()
         # print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
@@ -94,8 +94,6 @@ def DFS(draw, grid, start, dim):
                 came_from[neighbor] = node
     draw()
     print(str(len(visited) - 1) + " explored")
-    # EXPLORED.append(len(visited) - 1)
-    # DATA["DFS"] = [0, len(visited) - 1]
 
     my_data.graph_type = "DFS"
     my_data.path = 0 - 1
