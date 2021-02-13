@@ -81,7 +81,6 @@ def copy_grid(grid):
 
 def advance_fire_one_step(grid, q):
     grid_copy = copy_grid(grid)
-
     for row in grid:
         for cell in row:
             k = 0
@@ -92,13 +91,9 @@ def advance_fire_one_step(grid, q):
                         k += 1
             probability = 1 - ((1 - q) ** k)
             random_num = random.uniform(0, 1)
-            print(k)
-            print(probability)
-            print(random_num)
             if random_num <= probability:
                 grid[cell.row][cell.col].set_on_fire()
                 print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
-
     return grid_copy
 
 
@@ -210,7 +205,7 @@ def main(win, width, dimension, prob):
                         rand_col = random.randrange(dim)
                     if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
                         grid[rand_row][rand_col].set_on_fire()
-                    b = advance_fire_one_step(grid, 0.12)
+                    b = advance_fire_one_step(grid, 0.3)
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
@@ -233,9 +228,7 @@ def generate_data(win, width, dimension, prob):
         BFS(lambda: draw(win, grid, dim, width), grid, grid[0][0], dim)
         generate_maze(grid, dim, p, density)
         print(str(i) + "trial done")
-
-    # pygame.quit()
-
+    # pygame.quit(
     print("Generation complete")
 
 
