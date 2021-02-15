@@ -4,11 +4,9 @@ import math
 from queue import PriorityQueue
 import random
 import Node
-from algo import BFS, DFS, astar
-
-from copy import copy, deepcopy
-
 import algo
+from algo import BFS, DFS, astar
+from copy import copy, deepcopy
 
 pygame.display.set_caption("CS440 Proj1")
 
@@ -21,7 +19,7 @@ def printgrid(grid, rows):
     for i in range(rows):
         for j in range(rows):
             cell = grid[i][j]
-            print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.color))
+            print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.state))
             # print(str(cell.color))
 
 
@@ -34,7 +32,7 @@ def draw_grid(win, rows, width):
 
 
 def draw(win, grid, rows, width):
-    win.fill(Node.WHITE)
+    win.fill(Node.OPEN)
 
     for row in grid:
         for cell in row:
@@ -56,47 +54,6 @@ def create_grid(rows, width):
     return grid
 
 
-def copy_grid(grid):
-    num_row = len(grid)
-    grid_copy = []
-    for i in range(num_row):
-        grid_copy.append([])
-        for j in range(num_row):
-            curr = grid[i][j]
-            cell = Node.Cell(i, j, curr.width, curr.total_rows)
-            cell.color = curr.color
-            cell.x = curr.x
-            cell.y = curr.y
-            cell.is_start = curr.is_start
-            cell.is_target = curr.is_target
-            cell.is_blocked = curr.is_blocked
-            cell.is_closed = curr.is_closed
-            cell.is_on_fire = curr.is_on_fire
-            grid_copy[i].append(cell)
-    for row in grid:
-        for cell in row:
-            cell.update_neighbors(grid_copy)
-    return grid_copy
-
-
-def advance_fire_one_step(grid, q):
-    grid_copy = copy_grid(grid)
-    for row in grid:
-        for cell in row:
-            k = 0
-            if cell.color == Node.WHITE:
-                for neighbor in cell.neighbors:
-                    # print(neighbor.color)
-                    if neighbor.is_on_fire():
-                        k += 1
-            probability = 1 - ((1 - q) ** k)
-            random_num = random.uniform(0, 1)
-            if random_num <= probability:
-                grid[cell.row][cell.col].set_on_fire()
-                print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
-    return grid_copy
-
-
 def generate_maze(grid, dim, p, density):
     start = grid[0][0].set_start()
     origin = grid[0][0]
@@ -112,7 +69,7 @@ def generate_maze(grid, dim, p, density):
         cell = grid[x][y]
         if cnt == (dim * dim) - 2:  # if the entire maze is blocked
             break
-        if cell.is_start or cell.is_target or cell.is_blocked():
+        if cell.is_start() or cell.is_target() or cell.is_blocked():
             continue
         cell.set_blocked()
         blockedCount += 1
@@ -126,10 +83,9 @@ def generate_maze(grid, dim, p, density):
 def reset(grid):
     for row in grid:
         for cell in row:
-            if cell.is_start or cell.is_target or cell.is_blocked():
+            if cell.is_start() or cell.is_target() or cell.is_blocked():
                 continue
-            # if cell.color == Node.TURQUOISE or cell.color == Node.PURPLE:
-            cell.color = Node.WHITE
+            cell.state = Node.OPEN
 
 
 def main(win, width, dimension, prob):
@@ -159,7 +115,7 @@ def main(win, width, dimension, prob):
                 if event.key == pygame.K_SPACE and grid[0][0]:
                     for row in grid:
                         for cell in row:
-                            cell.color = Node.WHITE
+                            cell.state = Node.OPEN
                     generate_maze(grid, dim, p, density)
                     print("Maze is generated\n \n ")
 
@@ -201,11 +157,18 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
+                    count =0
+                    while count<400:
+                        count += 1
                         rand_row = random.randrange(dim)
                         rand_col = random.randrange(dim)
-                    if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
-                        grid[rand_row][rand_col].set_on_fire()
-                    b = advance_fire_one_step(grid, 0.3)
+                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                            grid[0][rand_col].set_on_fire()
+                            break
+                    # b = advance_fire_one_step(grid, 0.3)
+                    agent = Node.Agent(grid[0][0], 0, 0)
+                    path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
+
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
@@ -236,6 +199,5 @@ if __name__ == '__main__':
     dimension = int(sys.argv[1])
     prob = float(sys.argv[2])
     main(WIN, WIDTH, dimension, prob)
-    # generate_data(WIN, WIDTH, dimension, prob)
     print("\nData:")
     print(algo.DATA)

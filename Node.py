@@ -1,13 +1,13 @@
 import pygame
 
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 255, 0)
-YELLOW = (255, 255, 0)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-PURPLE = (128, 0, 128)
-ORANGE = (255, 165, 0)
+FIRE = (255, 0, 0)
+TARGET = (0, 255, 0)
+START = (0, 255, 0)
+AGENT = (255, 255, 0)
+OPEN = (255, 255, 255)
+BLOCKED = (0, 0, 0)
+PATH = (128, 0, 128)
+EXPLORED = (255, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
@@ -18,9 +18,7 @@ class Cell:
         self.col = col
         self.x = col * width
         self.y = row * width
-        self.color = WHITE
-        self.is_start = False
-        self.is_target = False
+        self.state = OPEN
         self.is_closed = False
         self.neighbors = []
         self.width = width
@@ -29,52 +27,53 @@ class Cell:
     def get_pos(self):
         return self.row, self.col
 
-    def get_color(self):
-        return self.color
+    def get_state(self):
+        return self.state
+
+    def is_blocked(self):
+        return self.state == BLOCKED
+
+    def is_start(self):
+        return self.state == START
+
+    def is_target(self):
+        return self.state == TARGET
+
+    def is_on_fire(self):
+        return self.state == FIRE
 
     def is_closed(self):
         return self.is_closed == True
 
-    def is_blocked(self):
-        return self.color == BLACK
-
-    def is_start(self):
-        return self.is_start == True
-
-    def is_target(self):
-        return self.is_target == True
-
-    def is_on_fire(self):
-        return self.color == RED
-
-    def set_start(self):
-        self.is_start = True
-        self.color = GREEN
-
     def set_closed(self):
         self.is_closed = True
 
+    def set_start(self):
+        self.state = START
+
     def set_blocked(self):
-        self.color = BLACK
+        self.state = BLOCKED
 
     def set_target(self):
-        self.is_target = True
-        self.color = BLUE
+        self.state = TARGET
 
     def set_path(self):
-        self.color = PURPLE
+        self.state = PATH
 
     def set_on_fire(self):
-        self.color = RED
+        self.state = FIRE
 
     def set_color(self):
-        self.color = TURQUOISE
+        self.state = TURQUOISE
+
+    def set_as_agent(self):
+        self.state = AGENT
 
     def set_explored(self):
-        self.color = ORANGE
+        self.state = EXPLORED
 
     def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+        pygame.draw.rect(win, self.state, (self.x, self.y, self.width, self.width))
 
     def update_neighbors(self, grid):
         self.neighbors = []
@@ -95,3 +94,16 @@ class Cell:
 
     def __lt__(self, other):
         return False
+
+
+class Agent:
+    def __init__(self, pos, row, col):
+        self.pos = pos
+        self.row = row
+        self.col = col
+
+    def get_pos(self):
+        return self.pos
+
+    def set_pos(self, position):
+        self.pos = position

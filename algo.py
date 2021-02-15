@@ -1,6 +1,8 @@
 from queue import PriorityQueue
 import math
 import Node
+import random
+from collections.abc import Iterable
 
 DATA = []
 
@@ -46,6 +48,7 @@ class StackFringe:
             return self.stack.append(loc)
 
 
+# return a list of path nodes
 def reconstruct_path(came_from, current, draw):
     path = []
     cnt = 0
@@ -57,7 +60,7 @@ def reconstruct_path(came_from, current, draw):
         path.append(current.get_pos())
         draw()
         # print(cnt)
-
+    print(path)
     return path
 
 
@@ -70,7 +73,7 @@ def DFS(draw, grid, start, dim):
     came_from = {}
     while not stack.is_empty():
         node = stack.pop()
-        node.set_color()
+        # node.set_color()
         # print("exploring:" + '[' + str(node.row) + ']' + ' [' + str(node.col) + ']')
         if node.row == dim - 1 and node.col == dim - 1:
             # print(len(came_from))
@@ -94,8 +97,6 @@ def DFS(draw, grid, start, dim):
                 came_from[neighbor] = node
     draw()
     print(str(len(visited) - 1) + " explored")
-    # EXPLORED.append(len(visited) - 1)
-    # DATA["DFS"] = [0, len(visited) - 1]
 
     my_data.graph_type = "DFS"
     my_data.path = 0 - 1
@@ -169,7 +170,6 @@ def astar(draw, grid, start, dim, target):
         curr.set_explored()
         if curr == target:
             path = reconstruct_path(came_from, curr, draw)
-
             my_data.graph_type = "Astar"
             my_data.path = len(path)
             my_data.explored = len(closed_list)
@@ -188,7 +188,6 @@ def astar(draw, grid, start, dim, target):
                 if neighbor not in closed_list:
                     open_list.put((f_score[neighbor], neighbor))
                     closed_list.append(neighbor)
-
         draw()
         if curr != start:
             curr.set_closed()
@@ -201,3 +200,156 @@ def astar(draw, grid, start, dim, target):
     DATA.append([my_data.graph_type, my_data.path, my_data.explored])
 
     return False
+
+
+def agent_astar(start, grid, target, strat):
+    came_from = {}
+    closed_list = []
+    open_list = PriorityQueue()
+    open_list.put((0, start))
+    g_score = {Node: float("inf") for row in grid for Node in row}
+    g_score[start] = 0
+    f_score = {Node: float("inf") for row in grid for Node in row}
+    f_score[start] = heuristic(start, target)
+    while not open_list.empty():
+        curr = open_list.get()[1]
+        # curr.set_explored()
+        if curr == target:
+            path = agent_path(came_from, curr)
+            return path
+        for neighbor in curr.neighbors:
+            temp_g_score = g_score[curr] + 1
+            if temp_g_score < g_score[neighbor]:
+                came_from[neighbor] = curr
+                g_score[neighbor] = temp_g_score
+                f_score[neighbor] = temp_g_score + heuristic(neighbor, target)
+                if neighbor not in closed_list:
+                    open_list.put((f_score[neighbor], neighbor))
+                    closed_list.append(neighbor)
+        if curr != start:
+            curr.set_closed()
+
+
+def agent_path(came_from, current):
+    path = []
+    cnt = 0
+    while current in came_from:
+        cnt += 1
+        current = came_from[current]
+        path.append(current.get_pos())
+    print(path)
+    return path
+
+
+def StrategyOne(agent, grid, target, draw, q):
+    agent_pos = grid[int(agent.row)][int(agent.col)]
+    path = []
+
+    astar_list = agent_astar(agent_pos, grid, target)
+    if not isinstance(astar_list, Iterable):
+        print("error occurred try again")
+        return
+    path.extend(astar_list)
+    agent_pos.set_as_agent()
+    draw()
+    path_so_far = {}
+    if len(path) <= 0:
+        print("Agent insta died")
+        return
+    if len(path) > 0:
+        path.pop()
+    while len(path) > 0:
+        next_step = path.pop()
+        # print("next step = " + str(next_step))
+        agent.row = next_step[0]
+        agent.col = next_step[1]
+        position = agent.set_pos(grid[int(agent.row)][int(agent.col)])
+        agent_pos = agent.get_pos()
+        if agent_pos.is_on_fire():
+            print("Agent died")
+            break
+        agent_pos.set_as_agent()
+        advance_fire_one_step(grid, q)
+        draw()
+    print("GOAL REACHED!")
+
+
+# redefine  the fire as a block and compute shortest path given just that.
+# move
+# rinse repeat
+def StrategyTwo(agent, grid, target, draw, q):
+    while True:
+        agent_pos = grid[int(agent.row)][int(agent.col)]
+        altered_maze = alterMaze(grid)
+        astar_list = agent_astar(agent_pos, altered_maze, target, 2)
+        if not isinstance(astar_list, Iterable):
+            print("No path available")
+            return
+        if len(astar_list) < 0:
+            print("no path is found")
+            return
+        agent.row = astar_list[0]
+        agent.col = astar_list[1]
+        agent.set_pos(grid[int(agent.row)][int(agent.col)])
+        if agent.pos == target:
+            agent_pos.set_as_agent()
+            print("GOAL")
+            return
+        if agent.pos.set_on_fire():
+            print("agent died")
+            return
+        agent_pos = agent.get_pos()
+        agent_pos.set_as_agent()
+        advance_fire_one_step(grid, q)
+        draw()
+
+def advance_fire_one_step(grid, q):
+    grid_copy = copy_grid(grid)
+    for row in grid:
+        for cell in row:
+            k = 0
+            if cell.state == Node.OPEN:
+                for neighbor in cell.neighbors:
+                    # print(neighbor.color)
+                    if neighbor.is_on_fire():
+                        k += 1
+            else:
+                continue
+            probability = 1 - ((1 - q) ** k)
+            random_num = random.uniform(0, 1)
+            if random_num <= probability:
+                grid[cell.row][cell.col].set_on_fire()
+                print('SETTING [' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
+    return grid_copy
+
+
+def alterMaze(grid):
+    grid_copy = copy_grid(grid)
+    for row in copy_grid:
+        for cell in row:
+            if cell.is_on_fire():
+                cell.set_as_BLOCKED
+    return copy_grid
+
+
+def copy_grid(grid):
+    num_row = len(grid)
+    grid_copy = []
+    for i in range(num_row):
+        grid_copy.append([])
+        for j in range(num_row):
+            curr = grid[i][j]
+            cell = Node.Cell(i, j, curr.width, curr.total_rows)
+            cell.state = curr.state
+            cell.x = curr.x
+            cell.y = curr.y
+            cell.is_start = curr.is_start
+            cell.is_target = curr.is_target
+            cell.is_blocked = curr.is_blocked
+            cell.is_closed = curr.is_closed
+            cell.is_on_fire = curr.is_on_fire
+            grid_copy[i].append(cell)
+    for row in grid:
+        for cell in row:
+            cell.update_neighbors(grid_copy)
+    return grid_copy
