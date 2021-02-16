@@ -15,12 +15,7 @@ WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption(" Path Finding Algorithm")
 
 
-def printgrid(grid, rows):
-    for i in range(rows):
-        for j in range(rows):
-            cell = grid[i][j]
-            print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.state))
-            # print(str(cell.color))
+
 
 
 def draw_grid(win, rows, width):
@@ -157,8 +152,8 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    count =0
-                    while count<400:
+                    count = 0
+                    while count < 400:
                         count += 1
                         rand_row = random.randrange(dim)
                         rand_col = random.randrange(dim)
@@ -167,8 +162,8 @@ def main(win, width, dimension, prob):
                             break
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-
+                    # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")

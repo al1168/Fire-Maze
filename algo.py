@@ -213,11 +213,24 @@ def agent_astar(start, grid, target, strat):
     f_score[start] = heuristic(start, target)
     while not open_list.empty():
         curr = open_list.get()[1]
+        # print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
         # curr.set_explored()
         if curr == target:
             path = agent_path(came_from, curr)
-            return path
+            if strat == 1:
+                return path
+            if strat == 2:
+                step = []
+                # print(path)
+                if(len(path)>=2):
+                    step.append(path[-2])
+                else:
+                    step.append((len(grid)-1,len(grid)-1))
+                return step
         for neighbor in curr.neighbors:
+            # print('THIS IS current ['+str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
+            # print('THIS IS THE NEIGHBOR[' + str(neighbor.row) + ']' + ' [' + str(neighbor.col) + ']' + ' ' + str(neighbor.state))
+            # print('THIS  THE  GSCORE'+str(g_score[neighbor]))
             temp_g_score = g_score[curr] + 1
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = curr
@@ -244,8 +257,7 @@ def agent_path(came_from, current):
 def StrategyOne(agent, grid, target, draw, q):
     agent_pos = grid[int(agent.row)][int(agent.col)]
     path = []
-
-    astar_list = agent_astar(agent_pos, grid, target)
+    astar_list = agent_astar(agent_pos, grid, target, 1)
     if not isinstance(astar_list, Iterable):
         print("error occurred try again")
         return
@@ -263,13 +275,13 @@ def StrategyOne(agent, grid, target, draw, q):
         # print("next step = " + str(next_step))
         agent.row = next_step[0]
         agent.col = next_step[1]
-        position = agent.set_pos(grid[int(agent.row)][int(agent.col)])
+        agent.set_pos(grid[int(agent.row)][int(agent.col)])
         agent_pos = agent.get_pos()
         if agent_pos.is_on_fire():
             print("Agent died")
-            break
+            return
         agent_pos.set_as_agent()
-        advance_fire_one_step(grid, q)
+        advance_fire_one_step(grid,q)
         draw()
     print("GOAL REACHED!")
 
@@ -277,34 +289,57 @@ def StrategyOne(agent, grid, target, draw, q):
 # redefine  the fire as a block and compute shortest path given just that.
 # move
 # rinse repeat
+def print_num(x,y):
+    print('['+str(int(x))+'] ['+str(int(y))+']')
 def StrategyTwo(agent, grid, target, draw, q):
-    while True:
-        agent_pos = grid[int(agent.row)][int(agent.col)]
-        altered_maze = alterMaze(grid)
-        astar_list = agent_astar(agent_pos, altered_maze, target, 2)
-        if not isinstance(astar_list, Iterable):
-            print("No path available")
-            return
-        if len(astar_list) < 0:
-            print("no path is found")
-            return
-        agent.row = astar_list[0]
-        agent.col = astar_list[1]
-        agent.set_pos(grid[int(agent.row)][int(agent.col)])
-        if agent.pos == target:
-            agent_pos.set_as_agent()
-            print("GOAL")
-            return
-        if agent.pos.set_on_fire():
+    agent_pos = grid[int(agent.row)][int(agent.col)]
+    path = []
+    dim = len(grid)
+    # printgrid(alter,len(alter))
+    # print("\n\n\n\n\n\n\n")
+    # printgrid(grid,len(grid))
+    cnt  = 0
+    while not agent.get_pos() == target:
+        alter = alterMaze(grid)
+        # print(cnt)
+        # printgrid(alter, len(alter))
+        # print("\n\n\n\n")
+        # printgrid(grid,len(grid))
+        agent_copy = Node.Agent(alter[int(agent.row)][int(agent.col)], int(agent.row), int(agent.col))
+        agent_copy_pos = agent_copy.get_pos()
+        target_copy = alter[dim - 1][dim - 1]
+        print('Agent_copy is:[ ' +str(int(agent_copy.row))+ '] '+ ' ['+str(int(agent_copy.col)) + '] ')
+        print(cnt)
+        astar_move = agent_astar(agent_copy_pos, alter, target_copy, 2)
+        if not isinstance(astar_move, Iterable):
+            print("error occurred try again")
+            break
+        if len(astar_move) < 1:
+            print("no path is possible")
+            break
+        move = astar_move.pop()
+        agent_row = move[0]
+        agent_col = move[1]
+        agent.set_pos(grid[agent_row][agent_col])
+        agent.row = agent_row
+        agent.col = agent_col
+        if agent.get_pos().is_on_fire():
             print("agent died")
             return
-        agent_pos = agent.get_pos()
-        agent_pos.set_as_agent()
+        if agent.get_pos() == target:
+            print("goal reached!")
+            agent.get_pos().set_as_agent()
+            draw()
+            break
+        agent.get_pos().set_as_agent()
         advance_fire_one_step(grid, q)
         draw()
+        cnt += 1
+    print("END?")
+
 
 def advance_fire_one_step(grid, q):
-    grid_copy = copy_grid(grid)
+    grid_copy = copy_grid(grid, 0)
     for row in grid:
         for cell in row:
             k = 0
@@ -319,20 +354,30 @@ def advance_fire_one_step(grid, q):
             random_num = random.uniform(0, 1)
             if random_num <= probability:
                 grid[cell.row][cell.col].set_on_fire()
-                print('SETTING [' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
+                # print('SETTING [' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
     return grid_copy
 
 
 def alterMaze(grid):
-    grid_copy = copy_grid(grid)
-    for row in copy_grid:
+    grid_copy = copy_grid(grid, 1)
+    for row in grid_copy:
         for cell in row:
             if cell.is_on_fire():
-                cell.set_as_BLOCKED
-    return copy_grid
+                cell.set_blocked()
+    for row in grid_copy:
+        for cell in row:
+            cell.update_neighbors(grid_copy)
+    # printgrid(grid, len(grid))
+    # print("\n\n\whatn\n\n\n")
+    # printgrid(grid_copy,len(grid_copy))
+    # print("\nend")
+    return grid_copy
+
+    # mode = 0 if need to update neighbors now
+    # mode = 1 if need to update  neighbors later
 
 
-def copy_grid(grid):
+def copy_grid(grid, mode):
     num_row = len(grid)
     grid_copy = []
     for i in range(num_row):
@@ -340,16 +385,36 @@ def copy_grid(grid):
         for j in range(num_row):
             curr = grid[i][j]
             cell = Node.Cell(i, j, curr.width, curr.total_rows)
-            cell.state = curr.state
+            cell.row = curr.row
+            cell.col = curr.col
             cell.x = curr.x
             cell.y = curr.y
-            cell.is_start = curr.is_start
-            cell.is_target = curr.is_target
-            cell.is_blocked = curr.is_blocked
+            cell.state = curr.state
             cell.is_closed = curr.is_closed
-            cell.is_on_fire = curr.is_on_fire
+            cell.width = curr.width
+            cell.total_rows = curr.total_rows
             grid_copy[i].append(cell)
-    for row in grid:
-        for cell in row:
-            cell.update_neighbors(grid_copy)
+    if mode == 0:
+        for row in grid_copy:
+            for cell in row:
+                cell.update_neighbors(grid_copy)
     return grid_copy
+
+
+# def create_grid(rows, width):
+#     grid = []
+#     gap = width // rows
+#     for i in range(rows):
+#         grid.append([])
+#         for j in range(rows):
+#             cell = Node.Cell(i, j, gap, rows)
+#             grid[i].append(cell)
+#
+#     return grid
+def printgrid(grid, rows):
+    for i in range(rows):
+        for j in range(rows):
+            cell = grid[i][j]
+            print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.state) + ' ' + str(
+                cell.neighbors))
+            # print(str(cell.color))
