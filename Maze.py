@@ -190,7 +190,15 @@ def main(win, width, dimension, prob):
                             break
                     # b = advance_fire_one_step(grid, 0.3)
                     '''
-                    algo.Strat3Simulation(grid, 1, dim)
+                    count = 0
+                    while count < 400:
+                        count += 1
+                        rand_row = random.randrange(dim)
+                        rand_col = random.randrange(dim)
+                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                            grid[rand_row][rand_col].set_on_fire()
+                            break
+                    algo.fire_simulation(grid, 1)
 
                 #reset Maze
                 if event.key == pygame.K_RETURN:

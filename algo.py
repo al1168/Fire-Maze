@@ -222,10 +222,10 @@ def agent_astar(start, grid, target, strat):
             if strat == 2:
                 step = []
                 # print(path)
-                if(len(path)>=2):
+                if (len(path) >= 2):
                     step.append(path[-2])
                 else:
-                    step.append((len(grid)-1,len(grid)-1))
+                    step.append((len(grid) - 1, len(grid) - 1))
                 return step
         for neighbor in curr.neighbors:
             # print('THIS IS current ['+str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
@@ -281,7 +281,7 @@ def StrategyOne(agent, grid, target, draw, q):
             print("Agent died")
             return
         agent_pos.set_as_agent()
-        advance_fire_one_step(grid,q)
+        advance_fire_one_step(grid, q)
         draw()
     print("GOAL REACHED!")
 
@@ -293,7 +293,7 @@ def StrategyOne(agent, grid, target, draw, q):
 def StrategyTwo(agent, grid, target, draw, q):
     agent_pos = grid[int(agent.row)][int(agent.col)]
     path = []
-    came_from ={}
+    came_from = {}
     dim = len(grid)
     # printgrid(alter,len(alter))
     # print("\n\n\n\n\n\n\n")
@@ -331,7 +331,7 @@ def StrategyTwo(agent, grid, target, draw, q):
         if agent.get_pos() == target:
             print("goal reached!")
             agent.get_pos().set_as_agent()
-            reconstruct_path(came_from,curr,draw)
+            reconstruct_path(came_from, curr, draw)
             break
         agent.get_pos().set_as_agent()
         advance_fire_one_step(grid, q)
@@ -341,7 +341,7 @@ def StrategyTwo(agent, grid, target, draw, q):
 
 
 def advance_fire_one_step(grid, q):
-    grid_copy = copy_grid(grid, 0)
+    # grid_copy = copy_grid(grid, 0)
     fire = []
     for row in grid:
         for cell in row:
@@ -360,7 +360,7 @@ def advance_fire_one_step(grid, q):
                 # print('SETTING [' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
     for cell in fire:
         cell.set_on_fire()
-    return grid_copy
+    return fire
 
 
 def alterMaze(grid):
@@ -425,43 +425,65 @@ def printgrid(grid, rows):
                 cell.neighbors))
             # print(str(cell.color))
 
-def Strat3Simulation(grid, q, dim):
-    #pick starting fire cell
-    curr = grid[0][0]
-    while True:
-        rand_row = random.randrange(dim)
-        rand_col = random.randrange(dim)
-        if grid[rand_row][rand_col].state == Node.OPEN:
-            curr = grid[rand_row][rand_col]
-            break
 
-    curr.set_on_fire()
-    curr.set_danger_value(1)
-    print("initial cell on fire")
-    print(curr.get_pos())
+# def Strat3Simulation(grid, q, dim):
+#     #pick starting fire cell
+#     curr = grid[0][0]
+#     while True:
+#         rand_row = random.randrange(dim)
+#         rand_col = random.randrange(dim)
+#         if grid[rand_row][rand_col].state == Node.OPEN:
+#             curr = grid[rand_row][rand_col]
+#             break
+# 
+#     curr.set_on_fire()
+#     curr.set_danger_value(1)
+#     print("initial cell on fire")
+#     print(curr.get_pos())
+# 
+#     for i in range(0, dim):
+#         advance_fire_one_step(grid, .3)
+# 
+#     #augMatrix = [dim][dim]
+#     rows, cols = (dim, dim)
+#     augMatrix = [[0 for i in range(cols)] for j in range(rows)]
+# 
+# 
+#     for row in grid:
+#         for cell in row:
+#             if cell.is_on_fire():
+#                 pos = cell.get_pos()
+#                 augMatrix[pos[0]][pos[1]] += 1
+# 
+# 
+#     print(augMatrix)
+#     for row in augMatrix:
+#         print(row)
+# 
+# 
+#     return augMatrix
 
-    for i in range(0, dim):
-        advance_fire_one_step(grid, .3)
-
-    #augMatrix = [dim][dim]
-    rows, cols = (dim, dim)
-    augMatrix = [[0 for i in range(cols)] for j in range(rows)]
-
-
+# simulates the fire to create  a danger value matrix
+def fire_simulation(grid, q):
+    num_row = len(grid)
+    danger_matrix = []
+    for i in range(num_row):
+        danger_matrix.append([])
+        for j in range(num_row):
+            danger_matrix[i].append(0)
+    rows = len(grid)
     for row in grid:
         for cell in row:
             if cell.is_on_fire():
-                pos = cell.get_pos()
-                augMatrix[pos[0]][pos[1]] += 1
+                danger_matrix[cell.row][cell.col] = 20
+    for i in range(0, rows):
+        grid_copy = copy_grid(grid, 0)
+        fire = advance_fire_one_step(grid_copy, q)
+        for cell in fire:
+            danger_matrix[cell.row][cell.col] += 1
+    print(danger_matrix)
+    return danger_matrix
 
 
-    print(augMatrix)
-    for row in augMatrix:
-        print(row)
-
-
-    return augMatrix
-
-
-
-
+def StrategyThree(grid, q, agent):
+    danger_matrix = fire_simulation(grid, q)
