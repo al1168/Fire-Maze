@@ -49,8 +49,8 @@ class Cell:
     def is_closed(self):
         return self.is_closed == True
 
-    def set_danger_value(self, val):
-        self.danger_value = val
+    def set_danger_value(self, x):
+        self.danger_value = x
 
     def set_closed(self):
         self.is_closed = True

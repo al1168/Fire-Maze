@@ -7,6 +7,7 @@ from collections.abc import Iterable
 DATA = []
 
 
+
 class Data:
     def __init__(self):
         self.path = 0
@@ -455,12 +456,108 @@ def Strat3Simulation(grid, q, dim):
                 augMatrix[pos[0]][pos[1]] += 1
 
 
-    print(augMatrix)
+    #print(augMatrix)
+    '''
     for row in augMatrix:
         print(row)
-
+    '''
 
     return augMatrix
+
+#modified astar for strategy 3
+def strat3_astar(start, grid, target, strat):
+    came_from = {}
+    closed_list = []
+    open_list = PriorityQueue()
+    open_list.put((0, start))
+    g_score = {Node: float("inf") for row in grid for Node in row}
+    g_score[start] = 0
+    f_score = {Node: float("inf") for row in grid for Node in row}
+    f_score[start] = heuristic(start, target)
+    while not open_list.empty():
+        curr = open_list.get()[1]
+        # print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
+        # curr.set_explored()
+        if curr == target:
+            path = agent_path(came_from, curr)
+            if strat == 1:
+                return path
+            if strat == 2:
+                step = []
+                # print(path)
+                if(len(path)>=2):
+                    step.append(path[-2])
+                else:
+                    step.append((len(grid)-1,len(grid)-1))
+                return step
+        for neighbor in curr.neighbors:
+            # print('THIS IS current ['+str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
+            # print('THIS IS THE NEIGHBOR[' + str(neighbor.row) + ']' + ' [' + str(neighbor.col) + ']' + ' ' + str(neighbor.state))
+            # print('THIS  THE  GSCORE'+str(g_score[neighbor]))
+            temp_g_score = g_score[curr] + 1
+            if temp_g_score < g_score[neighbor]:
+                if neighbor.get_danget_value()
+                came_from[neighbor] = curr
+                g_score[neighbor] = temp_g_score
+                f_score[neighbor] = temp_g_score + heuristic(neighbor, target)
+                if neighbor not in closed_list:
+                    open_list.put((f_score[neighbor], neighbor))
+                    closed_list.append(neighbor)
+        if curr != start:
+            curr.set_closed()
+
+
+#strategy three
+def StrategyThree(agent, grid, target, draw, q):
+
+    agent_pos = grid[int(agent.row)][int(agent.col)]
+    path = []
+    came_from ={}
+    dim = len(grid)
+    # printgrid(alter,len(alter))
+    # print("\n\n\n\n\n\n\n")
+    # printgrid(grid,len(grid))
+    cnt = 0
+    while not agent.get_pos() == target:
+        alter = alterMaze(grid)
+        # print(cnt)
+        # printgrid(alter, len(alter))
+        # print("\n\n\n\n")
+        # printgrid(grid,len(grid))
+        agent_copy = Node.Agent(alter[int(agent.row)][int(agent.col)], int(agent.row), int(agent.col))
+        agent_copy_pos = agent_copy.get_pos()
+        target_copy = alter[dim - 1][dim - 1]
+        # print('Agent_copy is:[ ' +str(int(agent_copy.row))+ '] '+ ' ['+str(int(agent_copy.col)) + '] ')
+        # print(cnt)
+        astar_move = agent_astar(agent_copy_pos, alter, target_copy, 2)
+        if not isinstance(astar_move, Iterable):
+            print("no path found")
+            break
+        if len(astar_move) < 1:
+            print("no path is possible")
+            break
+        move = astar_move.pop()
+        agent_row = move[0]
+        agent_col = move[1]
+        curr = grid[agent.row][agent.col]
+        agent.set_pos(grid[agent_row][agent_col])
+        agent.row = agent_row
+        agent.col = agent_col
+        came_from[grid[agent.row][agent.col]] = curr
+        if agent.get_pos().is_on_fire():
+            print("agent died")
+            return
+        if agent.get_pos() == target:
+            print("goal reached!")
+            agent.get_pos().set_as_agent()
+            reconstruct_path(came_from,curr,draw)
+            break
+        agent.get_pos().set_as_agent()
+        advance_fire_one_step(grid, q)
+        draw()
+        cnt += 1
+    print("END?")
+
 
 
 
