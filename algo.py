@@ -393,6 +393,7 @@ def copy_grid(grid, mode):
             cell.is_closed = curr.is_closed
             cell.width = curr.width
             cell.total_rows = curr.total_rows
+            cell.danger_value = curr.danger_value
             grid_copy[i].append(cell)
     if mode == 0:
         for row in grid_copy:
@@ -418,3 +419,46 @@ def printgrid(grid, rows):
             print('[' + str(cell.row) + ']' + ' [' + str(cell.col) + ']' + ' ' + str(cell.state) + ' ' + str(
                 cell.neighbors))
             # print(str(cell.color))
+
+def Strat3Simulation(grid, q, dim):
+    #pick starting fire cell
+    curr = grid[0][0]
+    while True:
+        rand_row = random.randrange(dim)
+        rand_col = random.randrange(dim)
+        if grid[rand_row][rand_col].state == Node.OPEN:
+            curr = grid[rand_row][rand_col]
+            break
+
+    curr.set_on_fire()
+    curr.set_danger_value(1)
+    print("initial cell on fire")
+    print(curr.get_pos())
+
+
+    for i in range(0, 1):
+        advance_fire_one_step(grid, q)
+
+    #augMatrix = [dim][dim]
+
+    rows, cols = (dim, dim)
+    augMatrix = [[0 for i in range(cols)] for j in range(rows)]
+    print(augMatrix)
+
+    for row in grid:
+        for cell in row:
+            if cell.is_on_fire():
+                pos = cell.get_pos()
+                augMatrix[pos[0]][pos[1]] += 1
+
+    '''
+    print(augMatrix)
+    for row in augMatrix:
+        print(row)
+
+    '''
+    return augMatrix
+
+
+
+

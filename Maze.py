@@ -138,6 +138,8 @@ def main(win, width, dimension, prob):
                         print("DFS completed")
                     else:
                         print("DFS Path does not exist")
+
+                #A Star
                 if event.key == ord('a') and grid[0][0]:
                     reset(grid)
                     for row in grid:
@@ -148,6 +150,8 @@ def main(win, width, dimension, prob):
                         print("Astar completed")
                     else:
                         print("Astar Path does not exist")
+
+                #Fire Maze
                 if event.key == ord('f') and grid[0][0]:
                     for row in grid:
                         for cell in row:
@@ -164,9 +168,37 @@ def main(win, width, dimension, prob):
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
                     path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+
+                # Simulate Maze
+                if event.key == ord('s') and grid[0][0]:
+                    for row in grid:
+                        for cell in row:
+                            cell.update_neighbors(grid)
+                    '''
+                    count = 0
+                    fire_cell = grid[0][0]
+                    while count < 400:
+                        count += 1
+                        rand_row = random.randrange(dim)
+                        rand_col = random.randrange(dim)
+                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                            grid[rand_row][rand_col].set_on_fire()
+                            fire_cell = grid[rand_row][rand_col]
+                            print(fire_cell.get_pos())
+
+                            break
+                    # b = advance_fire_one_step(grid, 0.3)
+                    '''
+                    algo.Strat3Simulation(grid, 1, dim)
+
+                #reset Maze
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
+
+
+
+
 
     pygame.quit()
 
