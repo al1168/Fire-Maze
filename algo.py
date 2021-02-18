@@ -250,7 +250,7 @@ def agent_path(came_from, current):
         cnt += 1
         current = came_from[current]
         path.append(current.get_pos())
-    print(path)
+    # print(path)
     return path
 
 
@@ -289,16 +289,16 @@ def StrategyOne(agent, grid, target, draw, q):
 # redefine  the fire as a block and compute shortest path given just that.
 # move
 # rinse repeat
-def print_num(x,y):
-    print('['+str(int(x))+'] ['+str(int(y))+']')
+
 def StrategyTwo(agent, grid, target, draw, q):
     agent_pos = grid[int(agent.row)][int(agent.col)]
     path = []
+    came_from ={}
     dim = len(grid)
     # printgrid(alter,len(alter))
     # print("\n\n\n\n\n\n\n")
     # printgrid(grid,len(grid))
-    cnt  = 0
+    cnt = 0
     while not agent.get_pos() == target:
         alter = alterMaze(grid)
         # print(cnt)
@@ -308,11 +308,11 @@ def StrategyTwo(agent, grid, target, draw, q):
         agent_copy = Node.Agent(alter[int(agent.row)][int(agent.col)], int(agent.row), int(agent.col))
         agent_copy_pos = agent_copy.get_pos()
         target_copy = alter[dim - 1][dim - 1]
-        print('Agent_copy is:[ ' +str(int(agent_copy.row))+ '] '+ ' ['+str(int(agent_copy.col)) + '] ')
-        print(cnt)
+        # print('Agent_copy is:[ ' +str(int(agent_copy.row))+ '] '+ ' ['+str(int(agent_copy.col)) + '] ')
+        # print(cnt)
         astar_move = agent_astar(agent_copy_pos, alter, target_copy, 2)
         if not isinstance(astar_move, Iterable):
-            print("error occurred try again")
+            print("no path found")
             break
         if len(astar_move) < 1:
             print("no path is possible")
@@ -320,16 +320,18 @@ def StrategyTwo(agent, grid, target, draw, q):
         move = astar_move.pop()
         agent_row = move[0]
         agent_col = move[1]
+        curr = grid[agent.row][agent.col]
         agent.set_pos(grid[agent_row][agent_col])
         agent.row = agent_row
         agent.col = agent_col
+        came_from[grid[agent.row][agent.col]] = curr
         if agent.get_pos().is_on_fire():
             print("agent died")
             return
         if agent.get_pos() == target:
             print("goal reached!")
             agent.get_pos().set_as_agent()
-            draw()
+            reconstruct_path(came_from,curr,draw)
             break
         agent.get_pos().set_as_agent()
         advance_fire_one_step(grid, q)
@@ -343,7 +345,7 @@ def advance_fire_one_step(grid, q):
     for row in grid:
         for cell in row:
             k = 0
-            if cell.state == Node.OPEN:
+            if cell.state == Node.OPEN or cell.state == Node.AGENT:
                 for neighbor in cell.neighbors:
                     # print(neighbor.color)
                     if neighbor.is_on_fire():

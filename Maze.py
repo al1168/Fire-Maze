@@ -158,12 +158,14 @@ def main(win, width, dimension, prob):
                         rand_row = random.randrange(dim)
                         rand_col = random.randrange(dim)
                         if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
-                            grid[0][rand_col].set_on_fire()
+                            grid[rand_row][rand_col].set_on_fire()
                             break
+                    # grid[40][10].set_on_fire()
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.18
+                                            )
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
