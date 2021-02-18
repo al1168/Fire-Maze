@@ -342,6 +342,7 @@ def StrategyTwo(agent, grid, target, draw, q):
 
 def advance_fire_one_step(grid, q):
     grid_copy = copy_grid(grid, 0)
+    fire = []
     for row in grid:
         for cell in row:
             k = 0
@@ -355,8 +356,10 @@ def advance_fire_one_step(grid, q):
             probability = 1 - ((1 - q) ** k)
             random_num = random.uniform(0, 1)
             if random_num <= probability:
-                grid[cell.row][cell.col].set_on_fire()
+                fire.append(grid[cell.row][cell.col])
                 # print('SETTING [' + str(cell.row) + ']' + ' [' + str(cell.col) + ']')
+    for cell in fire:
+        cell.set_on_fire()
     return grid_copy
 
 

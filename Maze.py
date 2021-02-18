@@ -164,7 +164,7 @@ def main(win, width, dimension, prob):
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.18
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),1
                                             )
                 if event.key == pygame.K_RETURN:
                     reset(grid)
