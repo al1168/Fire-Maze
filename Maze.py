@@ -84,7 +84,7 @@ def reset(grid):
             cell.state = Node.OPEN
 
 def apply_model(grid, dim):
-    print("applying model")
+    #print("applying model")
 
     for i in range(0, dim):
         for j in range(0, dim):
@@ -97,7 +97,6 @@ def main(win, width, dimension, prob):
     p = prob
     density = (dim ** 2) * p
     grid = create_grid(dim, width)
-    apply_model(grid, dim)
 
     generate_maze(grid, dim, p, density)
     print("Maze is generated")
@@ -173,10 +172,12 @@ def main(win, width, dimension, prob):
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-                    # path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    #path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
                     apply_model(grid, dim)
-                    path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                                            0.3)
+                    path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                                            0.3, dim)
+
+
 
                 # Simulate Maze
                 if event.key == ord('s') and grid[0][0]:
@@ -201,14 +202,6 @@ def main(win, width, dimension, prob):
 
 
     pygame.quit()
-    '''
-    print("\n grid:")
-    for row in grid:
-        for cell in row:
-            print(cell.get_danger_value())
-    '''
-    #print(model)
-
 
 
 

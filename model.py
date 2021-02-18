@@ -14,4 +14,3 @@ for i in range(50):
         count += 1
 print(cnt)
 
-print(count)

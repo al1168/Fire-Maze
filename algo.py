@@ -61,7 +61,7 @@ def reconstruct_path(came_from, current, draw):
         path.append(current.get_pos())
         draw()
         # print(cnt)
-    print(path)
+    #print(path)
     return path
 
 
@@ -464,8 +464,12 @@ def Strat3Simulation(grid, q, dim):
 
     return augMatrix
 
+
+#Strategy 3
+
 #modified astar for strategy 3
-def strat3_astar(start, grid, target, strat):
+def modifed_astar(draw, grid, start, dim, target):
+    my_data = Data()
     came_from = {}
     closed_list = []
     open_list = PriorityQueue()
@@ -476,87 +480,71 @@ def strat3_astar(start, grid, target, strat):
     f_score[start] = heuristic(start, target)
     while not open_list.empty():
         curr = open_list.get()[1]
-        # print('[' + str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
-        # curr.set_explored()
+        curr.set_explored()
         if curr == target:
-            path = agent_path(came_from, curr)
-            if strat == 1:
-                return path
-            if strat == 2:
-                step = []
-                # print(path)
-                if(len(path)>=2):
-                    step.append(path[-2])
-                else:
-                    step.append((len(grid)-1,len(grid)-1))
-                return step
+            path = reconstruct_path(came_from, curr, draw)
+            '''
+            my_data.graph_type = "Astar"
+            my_data.path = len(path)
+            my_data.explored = len(closed_list)
+            DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+
+            print(str(len(path)) + " in path")
+            print(str(len(closed_list)) + " explored")
+            '''
+            return path
+
         for neighbor in curr.neighbors:
-            # print('THIS IS current ['+str(curr.row) + ']' + ' [' + str(curr.col) + ']' + ' ' + str(curr.state))
-            # print('THIS IS THE NEIGHBOR[' + str(neighbor.row) + ']' + ' [' + str(neighbor.col) + ']' + ' ' + str(neighbor.state))
-            # print('THIS  THE  GSCORE'+str(g_score[neighbor]))
             temp_g_score = g_score[curr] + 1
             if temp_g_score < g_score[neighbor]:
-                if neighbor.get_danget_value()
                 came_from[neighbor] = curr
                 g_score[neighbor] = temp_g_score
                 f_score[neighbor] = temp_g_score + heuristic(neighbor, target)
                 if neighbor not in closed_list:
                     open_list.put((f_score[neighbor], neighbor))
                     closed_list.append(neighbor)
+        draw()
         if curr != start:
             curr.set_closed()
 
+    '''
+    print(str(len(closed_list)) + " explored")
+    my_data.graph_type = "Astar"
+    my_data.path = 0
+    my_data.explored = len(closed_list)
+    DATA.append([my_data.graph_type, my_data.path, my_data.explored])
+    '''
+    return []
+
 
 #strategy three
-def StrategyThree(agent, grid, target, draw, q):
-
-    agent_pos = grid[int(agent.row)][int(agent.col)]
+def StrategyThree(grid, target, draw, q, dim):
     path = []
-    came_from ={}
-    dim = len(grid)
-    # printgrid(alter,len(alter))
-    # print("\n\n\n\n\n\n\n")
-    # printgrid(grid,len(grid))
-    cnt = 0
-    while not agent.get_pos() == target:
-        alter = alterMaze(grid)
-        # print(cnt)
-        # printgrid(alter, len(alter))
-        # print("\n\n\n\n")
-        # printgrid(grid,len(grid))
-        agent_copy = Node.Agent(alter[int(agent.row)][int(agent.col)], int(agent.row), int(agent.col))
-        agent_copy_pos = agent_copy.get_pos()
-        target_copy = alter[dim - 1][dim - 1]
-        # print('Agent_copy is:[ ' +str(int(agent_copy.row))+ '] '+ ' ['+str(int(agent_copy.col)) + '] ')
-        # print(cnt)
-        astar_move = agent_astar(agent_copy_pos, alter, target_copy, 2)
-        if not isinstance(astar_move, Iterable):
-            print("no path found")
-            break
-        if len(astar_move) < 1:
-            print("no path is possible")
-            break
-        move = astar_move.pop()
-        agent_row = move[0]
-        agent_col = move[1]
-        curr = grid[agent.row][agent.col]
-        agent.set_pos(grid[agent_row][agent_col])
-        agent.row = agent_row
-        agent.col = agent_col
-        came_from[grid[agent.row][agent.col]] = curr
-        if agent.get_pos().is_on_fire():
-            print("agent died")
+    agent = grid[0][0]
+    curr_path = modifed_astar(draw, grid, agent, dim, target)
+    if len(curr_path) == 0:
+        print("No path")
+        return
+    print(curr_path)
+
+    curr_path.pop()
+    while curr_path == []:
+        loc = curr_path.pop()#
+        agent = grid[loc[0]][loc[1]]#agent take step
+        path.append(agent.get_pos())
+        advance_fire_one_step(grid, q) #fire take step
+        if agent.is_on_fire():
+            print("agent died in fire")
             return
-        if agent.get_pos() == target:
-            print("goal reached!")
-            agent.get_pos().set_as_agent()
-            reconstruct_path(came_from,curr,draw)
-            break
-        agent.get_pos().set_as_agent()
-        advance_fire_one_step(grid, q)
-        draw()
-        cnt += 1
-    print("END?")
+        if agent.get_danger_value() > 10: #if danger value > 10 recompute for new path
+            new_path = modifed_astar(draw, grid, agent, dim, target)
+            if new_path == []:
+                print("There is no path")
+                break
+            curr_path = new_path
+
+    print("Agent exited maze safely")
+    return
 
 
 
