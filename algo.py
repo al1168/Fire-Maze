@@ -473,7 +473,7 @@ def fire_simulation(grid, q):
             danger_matrix[i].append(0)
     rows = len(grid)
     sim_num = 0
-    while sim_num < 40:
+    while sim_num < 60:
         grid_copy = copy_grid(grid, 0)
         for i in range(0, rows):
             fire = advance_fire_one_step(grid_copy, q)
@@ -505,7 +505,7 @@ def StrategyThree(agent, grid, target, draw, q):
     path = []
     astar_list = asta(agent_pos, grid, target, 1,danger_matrix)
     if not isinstance(astar_list, Iterable):
-        print("error occurred try again")
+        print("Cannot reach exit")
         return
     path.extend(astar_list)
     agent_pos.set_as_agent()
