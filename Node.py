@@ -8,7 +8,7 @@ OPEN = (255, 255, 255)
 BLOCKED = (0, 0, 0)
 PATH = (128, 0, 128)
 EXPLORED = (255, 165, 0)
-
+GREY = (128, 128, 128)
 
 
 class Cell:

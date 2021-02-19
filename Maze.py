@@ -54,6 +54,7 @@ def generate_maze(grid, dim, p, density):
     end = grid[dim - 1][dim - 1]
     target = grid[dim - 1][dim - 1].set_target()
 
+
     blockedCount = 0
 
     cnt = 0
