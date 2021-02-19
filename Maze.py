@@ -171,11 +171,11 @@ def main(win, width, dimension, prob):
                     # grid[40][10].set_on_fire()
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-                    #path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
-                    apply_model(grid, dim)
-                    path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                                            0.3, dim)
+                    #path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 1)
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.7)
+                    #apply_model(grid, dim)
+                    #path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                    #                        0.3, dim)
 
 
 
