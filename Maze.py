@@ -15,8 +15,7 @@ WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption(" Path Finding Algorithm")
 
-
-
+# draw lines on pygame application
 def draw_grid(win, rows, width):
     gap = width // rows
     for i in range(rows):
@@ -24,10 +23,9 @@ def draw_grid(win, rows, width):
         for j in range(rows):
             pygame.draw.line(win, Node.GREY, (j * gap, 0), (j * gap, width))
 
-
+# draw the colors on py game
 def draw(win, grid, rows, width):
     win.fill(Node.OPEN)
-
     for row in grid:
         for cell in row:
             cell.draw(win)
@@ -35,7 +33,7 @@ def draw(win, grid, rows, width):
     draw_grid(win, rows, width)
     pygame.display.update()
 
-
+# creates a template maze with default values
 def create_grid(rows, width):
     grid = []
     gap = width // rows
@@ -47,13 +45,12 @@ def create_grid(rows, width):
 
     return grid
 
-
+# creates a randomly generated blocked maze
 def generate_maze(grid, dim, p, density):
     start = grid[0][0].set_start()
     origin = grid[0][0]
     end = grid[dim - 1][dim - 1]
     target = grid[dim - 1][dim - 1].set_target()
-
 
     blockedCount = 0
 
@@ -74,9 +71,7 @@ def generate_maze(grid, dim, p, density):
         # print("#" + str(cnt) + ": (" + str(x) + "," + str(y) + ")")
     print(str(blockedCount) + " blocked cells")
 
-
-
-
+# reset all nodes to original generated maze
 def reset(grid):
     for row in grid:
         for cell in row:
@@ -84,21 +79,20 @@ def reset(grid):
                 continue
             cell.state = Node.OPEN
 
+
 def apply_model(grid, dim):
-    #print("applying model")
 
     for i in range(0, dim):
         for j in range(0, dim):
             grid[i][j].set_danger_value(model.MODEL[i][j])
 
-            #print("Danger Value:  "+str(grid[i][j].get_danger_value()))
+
 
 def main(win, width, dimension, prob):
     dim = dimension
     p = prob
     density = (dim ** 2) * p
     grid = create_grid(dim, width)
-
     generate_maze(grid, dim, p, density)
     print("Maze is generated")
 
@@ -144,7 +138,7 @@ def main(win, width, dimension, prob):
                     else:
                         print("DFS Path does not exist")
 
-                #A Star
+                # A Star
                 if event.key == ord('a') and grid[0][0]:
                     reset(grid)
                     for row in grid:
@@ -156,7 +150,8 @@ def main(win, width, dimension, prob):
                     else:
                         print("Astar Path does not exist")
 
-                #Fire Maze
+                #Strategy 1
+                # Press  F to run
                 if event.key == ord('f') and grid[0][0]:
                     for row in grid:
                         for cell in row:
@@ -170,35 +165,19 @@ def main(win, width, dimension, prob):
                             grid[rand_row][rand_col].set_on_fire()
                             break
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
+                    path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                                            0.5)
                     # path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
-                    path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.4)
+                    # path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.4)
                     # apply_model(grid, dim)
                     # path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
                     #                         0.3, dim)
-
-                if event.key == ord('r') and grid[0][0]:
+                #Strategy 2
+                # Press G to run
+                if event.key == ord('g') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    count = 0
-                    # just to generate one random fire cell
-                    while count < 400:
-                        count += 1
-                        rand_row = random.randrange(dim)
-                        rand_col = random.randrange(dim)
-                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
-                            grid[rand_row][rand_col].set_on_fire()
-                            break
-                    agent = Node.Agent(grid[0][0], 0, 0)
-                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1],lambda: draw(win, grid, dim, width), 0.1)
-                # Simulate Maze
-                if event.key == ord('s') and grid[0][0]:
-                    for row in grid:
-                        for cell in row:
-                            cell.update_neighbors(grid)
-                            break
-
                     count = 0
                     while count < 400:
                         count += 1
@@ -208,25 +187,41 @@ def main(win, width, dimension, prob):
                             grid[rand_row][rand_col].set_on_fire()
                             break
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    algo.StrategyThree(agent, grid, grid[dim-1][dim-1], lambda: draw(win, grid, dim, width), 0.3)
+                    # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                                            0.3)
+                    # path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.4)
+                    # apply_model(grid, dim)
+                    # path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                    #                         0.3, dim)
+                # Strategy 3
+                # Press H to run
+                if event.key == ord('h') and grid[0][0]:
+                    for row in grid:
+                        for cell in row:
+                            cell.update_neighbors(grid)
+                    count = 0
+                    while count < 400:
+                        count += 1
+                        rand_row = random.randrange(dim)
+                        rand_col = random.randrange(dim)
+                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                            grid[rand_row][rand_col].set_on_fire()
+                            break
+                    agent = Node.Agent(grid[0][0], 0, 0)
+                    algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
 
                     # m = algo.Strat3Simulation(grid, 1, dim)
                     # for i in range(0, dim):
                     #     for j in range(0, dim):
                     #         model[i][j] = model[i][j] + m[i][j]
 
-
-                #reset Maze pressing enter
+                # reset Maze pressing enter
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
 
-
-
-
-
     pygame.quit()
-
 
 
 def generate_data(win, width, dimension, prob):
@@ -254,7 +249,7 @@ if __name__ == '__main__':
     main(WIN, WIDTH, dimension, prob)
     print("\nData:")
     print(algo.DATA)
-    #print(model.MODEL)
+    # print(model.MODEL)
     '''
     print("print model5")
     for i in range(0, 5):

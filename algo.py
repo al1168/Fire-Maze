@@ -424,7 +424,7 @@ def fire_simulation(grid, q):
                 if cell.is_on_fire():
                     danger_matrix[cell.row][cell.col] += 1
         sim_num += 1
-    print(danger_matrix)
+    # print(danger_matrix)
     return danger_matrix
 
 #
@@ -436,10 +436,10 @@ def fire_simulation(grid, q):
 # 2.compute  a  path  with astar
 # 3. folow the path, and hope agent  lives
 def StrategyThree(agent, grid, target, draw, q):
-    restrict = {}
     danger_matrix = fire_simulation(grid, q)
-    print("dangermatrix: \n")
-    print(danger_matrix)
+    # print("dangermatrix: \n")
+    # print(danger_matrix)
+    came_from = {}
     for i in range(len(danger_matrix)):
         for j in range(len(danger_matrix)):
             grid[i][j].set_danger_value(danger_matrix[i][j])
@@ -457,6 +457,7 @@ def StrategyThree(agent, grid, target, draw, q):
             print("no path found")
             break
         if len(path) < 1:
+
             print("GOAL")
             break
         # print("this is the path"+path)
@@ -466,15 +467,14 @@ def StrategyThree(agent, grid, target, draw, q):
         step = path.pop()
         agent.row = step[0]
         agent.col = step[1]
+        came_from[grid[agent.row][agent.col]] = agent.get_pos()
         agent.set_pos(grid[agent.row][agent.col])
         agent.get_pos().set_as_agent()
         if agent.get_pos().is_on_fire():
             print("agent died")
             return
-        advance_fire_one_step(grid,q)
+        advance_fire_one_step(grid, q)
         draw()
-        print(path)
-        print('\n')
         if(agent.get_pos==target):
             print('GOAL')
             break
