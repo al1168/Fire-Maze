@@ -14,15 +14,6 @@ p=.7 :: [['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar
 p=.8 :: [['Astar', 0, 4], ['BFS', 0, 4], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 3], ['BFS', 0, 3], ['Astar', 0, 0], ['BFS', 0, 0]]
 p=.9 :: [['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0]]
 
-Question 4
-DFS :: Dim = 265 :: 35
-
-DFS :: Dim = 310 :: 1min
-BFS :: Dim 255 :: 1min
-Astar :: Dim = 230 :: 1min
-
-
-
 
 '''
 data = [['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 1], ['BFS', 0, 1], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 2], ['BFS', 0, 2], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0], ['Astar', 0, 0], ['BFS', 0, 0]]
@@ -76,8 +67,8 @@ strat2_q = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
 strat2_success_probability = np.array([10/10, 8/10, 7/10, 5/10, 3/10, 2/10, 0/10, 0/10, 0/10, 0/10, 0/10])
 
 #Question 4 Bar Chart
-x_q4 = np.array(["A*", "BFS", "DFS"])
-y_q4 = np.array([230, 255, 310])
+x_q4 = np.array(["DFS", "BFS", "A*"])
+y_q4 = np.array([300, 310, 255])
 
 plt.bar(x_q4,y_q4)
 
