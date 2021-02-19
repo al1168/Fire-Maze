@@ -69,6 +69,11 @@ plt.scatter(p_value, astar_ave, color="red")
 plt.xlabel("Obstacle Density P")
 plt.ylabel("Average Cells Explored")
 '''
+strat1_q = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+strat1_success_probability = np.array([10/10, 12/20, 8/20, 8/20, 4/20, 2/10, 0/10, 0/10, 0/10, 0/10, 0/10])
+
+strat2_q = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+strat2_success_probability = np.array([10/10, 8/10, 7/10, 5/10, 3/10, 2/10, 0/10, 0/10, 0/10, 0/10, 0/10])
 
 #Question 4 Bar Chart
 x_q4 = np.array(["A*", "BFS", "DFS"])
