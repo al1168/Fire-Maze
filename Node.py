@@ -96,7 +96,8 @@ class Cell:
     def get_neighbors(self):
         return self.neighbors
 
-
+    def __lt__(self, other):
+        return False
 
 class Agent:
     def __init__(self, pos, row, col):
