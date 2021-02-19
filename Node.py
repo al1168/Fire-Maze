@@ -8,8 +8,7 @@ OPEN = (255, 255, 255)
 BLOCKED = (0, 0, 0)
 PATH = (128, 0, 128)
 EXPLORED = (255, 165, 0)
-GREY = (128, 128, 128)
-TURQUOISE = (64, 224, 208)
+
 
 
 class Cell:
@@ -71,9 +70,6 @@ class Cell:
     def set_on_fire(self):
         self.state = FIRE
 
-    def set_color(self):
-        self.state = TURQUOISE
-
     def set_as_agent(self):
         self.state = AGENT
 
@@ -100,8 +96,6 @@ class Cell:
     def get_neighbors(self):
         return self.neighbors
 
-    def __lt__(self, other):
-        return False
 
 
 class Agent:
