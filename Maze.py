@@ -169,8 +169,6 @@ def main(win, width, dimension, prob):
                         if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
                             grid[rand_row][rand_col].set_on_fire()
                             break
-                    # grid[4][6].set_on_fire()
-                    # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
                     # path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
@@ -184,6 +182,7 @@ def main(win, width, dimension, prob):
                         for cell in row:
                             cell.update_neighbors(grid)
                     count = 0
+                    # just to generate one random fire cell
                     while count < 400:
                         count += 1
                         rand_row = random.randrange(dim)
@@ -198,9 +197,7 @@ def main(win, width, dimension, prob):
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-
                             break
-                    # b = advance_fire_one_step(grid, 0.3)
 
                     count = 0
                     while count < 400:
@@ -213,15 +210,13 @@ def main(win, width, dimension, prob):
                     agent = Node.Agent(grid[0][0], 0, 0)
                     algo.StrategyThree(agent, grid, grid[dim-1][dim-1], lambda: draw(win, grid, dim, width), 0.3)
 
-
-
                     # m = algo.Strat3Simulation(grid, 1, dim)
                     # for i in range(0, dim):
                     #     for j in range(0, dim):
                     #         model[i][j] = model[i][j] + m[i][j]
 
 
-                #reset Maze
+                #reset Maze pressing enter
                 if event.key == pygame.K_RETURN:
                     reset(grid)
                     print("Maze Reset")
