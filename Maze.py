@@ -7,14 +7,13 @@ import Node
 import algo
 from algo import BFS, DFS, astar
 from copy import copy, deepcopy
+import model
 
 pygame.display.set_caption("CS440 Proj1")
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption(" Path Finding Algorithm")
-
-
 
 
 
@@ -75,6 +74,8 @@ def generate_maze(grid, dim, p, density):
     print(str(blockedCount) + " blocked cells")
 
 
+
+
 def reset(grid):
     for row in grid:
         for cell in row:
@@ -82,6 +83,14 @@ def reset(grid):
                 continue
             cell.state = Node.OPEN
 
+def apply_model(grid, dim):
+    #print("applying model")
+
+    for i in range(0, dim):
+        for j in range(0, dim):
+            grid[i][j].set_danger_value(model.MODEL[i][j])
+
+            #print("Danger Value:  "+str(grid[i][j].get_danger_value()))
 
 def main(win, width, dimension, prob):
     dim = dimension
@@ -91,15 +100,10 @@ def main(win, width, dimension, prob):
 
     generate_maze(grid, dim, p, density)
     print("Maze is generated")
-    '''
-    #testign neighbors
-    testCell = grid[1][2]
-    testCell.update_neighbors(grid)
-    nei = testCell.get_neighbors()
-    print(len(nei))
-    for i in nei:
-        print(i.get_pos())
-    '''
+
+    m_rows, m_cols = (dim, dim)
+    model = [[0 for i in range(m_cols)] for j in range(m_rows)]
+
     run = True
     while run:
         draw(win, grid, dim, width)
@@ -164,32 +168,39 @@ def main(win, width, dimension, prob):
                         if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
                             grid[rand_row][rand_col].set_on_fire()
                             break
-                    # grid[40][10].set_on_fire()
+                    # grid[4][6].set_on_fire()
                     # b = advance_fire_one_step(grid, 0.3)
                     agent = Node.Agent(grid[0][0], 0, 0)
                     # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
-                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    # path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    # apply_model(grid, dim)
+                    # path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
+                    #                         0.3, dim)
 
+                if event.key == ord('r') and grid[0][0]:
+                    for row in grid:
+                        for cell in row:
+                            cell.update_neighbors(grid)
+                    count = 0
+                    while count < 400:
+                        count += 1
+                        rand_row = random.randrange(dim)
+                        rand_col = random.randrange(dim)
+                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
+                            grid[rand_row][rand_col].set_on_fire()
+                            break
+                    agent = Node.Agent(grid[0][0], 0, 0)
+                    path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1],lambda: draw(win, grid, dim, width), 0.3)
                 # Simulate Maze
                 if event.key == ord('s') and grid[0][0]:
                     for row in grid:
                         for cell in row:
                             cell.update_neighbors(grid)
-                    '''
-                    count = 0
-                    fire_cell = grid[0][0]
-                    while count < 400:
-                        count += 1
-                        rand_row = random.randrange(dim)
-                        rand_col = random.randrange(dim)
-                        if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
-                            grid[rand_row][rand_col].set_on_fire()
-                            fire_cell = grid[rand_row][rand_col]
-                            print(fire_cell.get_pos())
 
                             break
                     # b = advance_fire_one_step(grid, 0.3)
-                    '''
+
                     count = 0
                     while count < 400:
                         count += 1
@@ -198,7 +209,16 @@ def main(win, width, dimension, prob):
                         if not grid[rand_row][rand_col].is_blocked() and not grid[rand_row][rand_col].is_on_fire():
                             grid[rand_row][rand_col].set_on_fire()
                             break
-                    algo.fire_simulation(grid, 1)
+                    agent = Node.Agent(grid[0][0], 0, 0)
+                    algo.StrategyThree(agent, grid, grid[dim-1][dim-1], lambda: draw(win, grid, dim, width), 0.3)
+
+
+
+                    # m = algo.Strat3Simulation(grid, 1, dim)
+                    # for i in range(0, dim):
+                    #     for j in range(0, dim):
+                    #         model[i][j] = model[i][j] + m[i][j]
+
 
                 #reset Maze
                 if event.key == pygame.K_RETURN:
@@ -210,6 +230,7 @@ def main(win, width, dimension, prob):
 
 
     pygame.quit()
+
 
 
 def generate_data(win, width, dimension, prob):
@@ -237,3 +258,10 @@ if __name__ == '__main__':
     main(WIN, WIDTH, dimension, prob)
     print("\nData:")
     print(algo.DATA)
+    #print(model.MODEL)
+    '''
+    print("print model5")
+    for i in range(0, 5):
+        for j in range(0, 5):
+            print(model.MODEL5[i][j])
+    '''

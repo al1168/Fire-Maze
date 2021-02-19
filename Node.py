@@ -24,7 +24,8 @@ class Cell:
         self.width = width
         self.total_rows = total_rows
         self.danger_value = 0
-
+    def get_danger_neighbor(self):
+        return self.danger_value, self
     def get_danger_value(self):
         return self.danger_value
 
@@ -49,8 +50,8 @@ class Cell:
     def is_closed(self):
         return self.is_closed == True
 
-    def set_danger_value(self, val):
-        self.danger_value = val
+    def set_danger_value(self, x):
+        self.danger_value = x
 
     def set_closed(self):
         self.is_closed = True
