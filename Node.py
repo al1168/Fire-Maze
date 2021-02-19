@@ -24,7 +24,8 @@ class Cell:
         self.width = width
         self.total_rows = total_rows
         self.danger_value = 0
-
+    def get_danger_neighbor(self):
+        return self.danger_value, self
     def get_danger_value(self):
         return self.danger_value
 

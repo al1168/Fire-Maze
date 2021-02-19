@@ -13,4 +13,3 @@ for i in range(50):
             cnt += 1
         count += 1
 print(cnt)
-
