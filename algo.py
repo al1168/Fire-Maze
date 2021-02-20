@@ -148,7 +148,6 @@ def BFS(draw, grid, start, dim):
     my_data.path = 0
     my_data.explored = len(visited) - 1
     DATA.append([my_data.graph_type, my_data.path, my_data.explored])
-
     return False
 
 # Heuristic function for computing A*
@@ -530,81 +529,3 @@ def asta(start, grid, target, strat,danger_matrix):
         if curr != start:
             curr.set_closed()
 
-# Strategy 3
-
-# modified astar for strategy 3
-# def modifed_astar(draw, grid, start, dim, target):
-#     my_data = Data()
-#     came_from = {}
-#     closed_list = []
-#     open_list = PriorityQueue()
-#     open_list.put((0, start))
-#     g_score = {Node: float("inf") for row in grid for Node in row}
-#     g_score[start] = 0
-#     f_score = {Node: float("inf") for row in grid for Node in row}
-#     f_score[start] = heuristic(start, target)
-#     while not open_list.empty():
-#         curr = open_list.get()[1]
-#         curr.set_explored()
-#         if curr == target:
-#             path = reconstruct_path(came_from, curr, draw)
-#             '''
-#             my_data.graph_type = "Astar"
-#             my_data.path = len(path)
-#             my_data.explored = len(closed_list)
-#             DATA.append([my_data.graph_type, my_data.path, my_data.explored])
-#             print(str(len(path)) + " in path")
-#             print(str(len(closed_list)) + " explored")
-#             '''
-#             return path
-#
-#         for neighbor in curr.neighbors:
-#             temp_g_score = g_score[curr] + 1
-#             if temp_g_score < g_score[neighbor]:
-#                 came_from[neighbor] = curr
-#                 g_score[neighbor] = temp_g_score
-#                 f_score[neighbor] = temp_g_score + heuristic(neighbor, target)
-#                 if neighbor not in closed_list:
-#                     open_list.put((f_score[neighbor], neighbor))
-#                     closed_list.append(neighbor)
-#         draw()
-#         if curr != start:
-#             curr.set_closed()
-#
-#     '''
-#     print(str(len(closed_list)) + " explored")
-#     my_data.graph_type = "Astar"
-#     my_data.path = 0
-#     my_data.explored = len(closed_list)
-#     DATA.append([my_data.graph_type, my_data.path, my_data.explored])
-#     '''
-#     return []
-
-# #strategy three
-# def StrategyThree(grid, target, draw, q, dim):
-#     path = []
-#     agent = grid[0][0]
-#     curr_path = modifed_astar(draw, grid, agent, dim, target)
-#     if len(curr_path) == 0:
-#         print("No path")
-#         return
-#     print(curr_path)
-#
-#     curr_path.pop()
-#     while curr_path == []:
-#         loc = curr_path.pop()#
-#         agent = grid[loc[0]][loc[1]]#agent take step
-#         path.append(agent.get_pos())
-#         advance_fire_one_step(grid, q) #fire take step
-#         if agent.is_on_fire():
-#             print("agent died in fire")
-#             return
-#         if agent.get_danger_value() > 10: #if danger value > 10 recompute for new path
-#             new_path = modifed_astar(draw, grid, agent, dim, target)
-#             if new_path == []:
-#                 print("There is no path")
-#                 break
-#             curr_path = new_path
-#
-#     print("Agent exited maze safely")
-#     return

@@ -88,7 +88,7 @@ def apply_model(grid, dim):
 
 
 
-def main(win, width, dimension, prob):
+def main(win, width, dimension, prob,q):
     dim = dimension
     p = prob
     density = (dim ** 2) * p
@@ -166,13 +166,8 @@ def main(win, width, dimension, prob):
                             break
                     agent = Node.Agent(grid[0][0], 0, 0)
                     path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                                            0.5)
-                    # path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
-                    # path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.4)
-                    # apply_model(grid, dim)
-                    # path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                    #                         0.3, dim)
-                #Strategy 2
+                                            q)
+                # Strategy 2
                 # Press G to run
                 if event.key == ord('g') and grid[0][0]:
                     for row in grid:
@@ -187,13 +182,8 @@ def main(win, width, dimension, prob):
                             grid[rand_row][rand_col].set_on_fire()
                             break
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    # path = algo.StrategyOne(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.5)
                     path = algo.StrategyTwo(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                                            0.3)
-                    # path = algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.4)
-                    # apply_model(grid, dim)
-                    # path = algo.StrategyThree(grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width),
-                    #                         0.3, dim)
+                                            q)
                 # Strategy 3
                 # Press H to run
                 if event.key == ord('h') and grid[0][0]:
@@ -209,7 +199,7 @@ def main(win, width, dimension, prob):
                             grid[rand_row][rand_col].set_on_fire()
                             break
                     agent = Node.Agent(grid[0][0], 0, 0)
-                    algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), 0.3)
+                    algo.StrategyThree(agent, grid, grid[dim - 1][dim - 1], lambda: draw(win, grid, dim, width), q)
 
                     # m = algo.Strat3Simulation(grid, 1, dim)
                     # for i in range(0, dim):
@@ -246,7 +236,8 @@ def generate_data(win, width, dimension, prob):
 if __name__ == '__main__':
     dimension = int(sys.argv[1])
     prob = float(sys.argv[2])
-    main(WIN, WIDTH, dimension, prob)
+    q = float(sys.argv[3])
+    main(WIN, WIDTH, dimension, prob,q)
     print("\nData:")
     print(algo.DATA)
     # print(model.MODEL)
