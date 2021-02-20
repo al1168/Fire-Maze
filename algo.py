@@ -3,7 +3,11 @@ import math
 import Node
 import random
 from collections.abc import Iterable
-
+'''
+Authors
+Alden Lu al1168
+Haoran Wen hw408
+'''
 DATA = []
 
 
