@@ -1,19 +1,22 @@
 import sys
 import pygame
-import math
-from queue import PriorityQueue
 import random
 import Node
 import algo
 from algo import BFS, DFS, astar
-from copy import copy, deepcopy
-import model
+# import model
+
+'''
+Authors
+Alden Lu al1168
+Haoran Wen hw408
+'''
 
 pygame.display.set_caption("CS440 Proj1")
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption(" Path Finding Algorithm")
+pygame.display.set_caption("Path Finding Algorithm")
 
 # draw lines on pygame application
 def draw_grid(win, rows, width):
@@ -79,12 +82,12 @@ def reset(grid):
                 continue
             cell.state = Node.OPEN
 
-
-def apply_model(grid, dim):
-
-    for i in range(0, dim):
-        for j in range(0, dim):
-            grid[i][j].set_danger_value(model.MODEL[i][j])
+#
+# def apply_model(grid, dim):
+#
+#     for i in range(0, dim):
+#         for j in range(0, dim):
+#             grid[i][j].set_danger_value(model.MODEL[i][j])
 
 
 

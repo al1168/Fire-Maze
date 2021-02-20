@@ -164,24 +164,26 @@ def astar(draw, grid, start, dim, target):
     closed_list = []
     open_list = PriorityQueue()
     open_list.put((0, start))
+    # Using List comprehension, we set the g score and f score of all the nodes to inf initially
     g_score = {Node: float("inf") for row in grid for Node in row}
     g_score[start] = 0
     f_score = {Node: float("inf") for row in grid for Node in row}
     f_score[start] = heuristic(start, target)
+    # loops the fringe
     while not open_list.empty():
         curr = open_list.get()[1]
         curr.set_explored()
+        # if path found, reconstructs path by setting color on the pygame grid
         if curr == target:
             path = reconstruct_path(came_from, curr, draw)
             my_data.graph_type = "Astar"
             my_data.path = len(path)
             my_data.explored = len(closed_list)
             DATA.append([my_data.graph_type, my_data.path, my_data.explored])
-
             print(str(len(path)) + " in path")
             print(str(len(closed_list)) + " explored")
             return True
-
+        # explore the neighbors and find an unexplored neighbor to explore based on the f score
         for neighbor in curr.neighbors:
             temp_g_score = g_score[curr] + 1
             if temp_g_score < g_score[neighbor]:
@@ -368,9 +370,9 @@ def alterMaze(grid):
             cell.update_neighbors(grid_copy)
     return grid_copy
 
-    # mode = 0 if need to update neighbors now
-    # mode = 1 if need to update  neighbors later
 
+# mode = 0 if need to update neighbors now
+# mode = 1 if need to update  neighbors later
 # interate the grid and return a copy of that grid
 def copy_grid(grid, mode):
     num_row = len(grid)
@@ -395,6 +397,7 @@ def copy_grid(grid, mode):
             for cell in row:
                 cell.update_neighbors(grid_copy)
     return grid_copy
+
 # print grid coordinates and its neighbors
 def printgrid(grid, rows):
     for i in range(rows):
@@ -416,7 +419,7 @@ def fire_simulation(grid, q):
     sim_num = 0
     while sim_num < 60:
         grid_copy = copy_grid(grid, 0)
-        for i in range(0, rows+20):
+        for i in range(0, rows):
             fire = advance_fire_one_step(grid_copy, q)
         for row in grid_copy:
             for cell in row:
@@ -426,18 +429,11 @@ def fire_simulation(grid, q):
     # print(danger_matrix)
     return danger_matrix
 
-#
-# def myFunc(e):
-#     return e[0]
-
-
 # 1.generate  a danger matrix
 # 2.compute  a  path  with astar
-# 3. folow the path, and hope agent  lives
+# 3. follow the path, and hope agent  lives
 def StrategyThree(agent, grid, target, draw, q):
     danger_matrix = fire_simulation(grid, q)
-    # print("dangermatrix: \n")
-    # print(danger_matrix)
     came_from = {}
     for i in range(len(danger_matrix)):
         for j in range(len(danger_matrix)):
@@ -456,7 +452,6 @@ def StrategyThree(agent, grid, target, draw, q):
             print("no path found")
             break
         if len(path) < 1:
-
             print("GOAL")
             break
         # print("this is the path"+path)
@@ -477,27 +472,6 @@ def StrategyThree(agent, grid, target, draw, q):
         if(agent.get_pos==target):
             print('GOAL')
             break
-        # if danger_matrix[agent.row][agent.col] > 15:
-        #     print(danger_matrix[agent.row][agent.col])
-        #     print("no")
-        #     candidates = []
-        #     for neighbor in agent.get_pos().neighbors:
-        #         candidates.append(neighbor.get_danger_neighbor())
-        #     candidates.sort(reverse=True, key=myFunc)
-        #     candidate = candidates.pop()
-        #     print("current:" +  '[' + str(agent.row) + ']' + ' [' + str(agent.col) + ']' + str(danger_matrix[agent.row][agent.col]))
-        #     print("candidate:\n")
-        #     print(candidate)
-        #     print('[' + str(candidate[1].row) + ']' + ' [' + str(candidate[1].col) + ']')
-        #     if candidate[0] >= 15 or candidate[0] >= danger_matrix[agent.row][agent.col]:
-        #         continue
-        #     if candidate[0] < danger_matrix[agent.row][agent.col]:
-        #         alterPath = asta(candidate[1],grid,target,1,danger_matrix)
-        #         # path = alterPath
-        #     print("alterpath:")
-        #     print(alterPath)
-        #     if len(alterPath) < 0:
-        #         continue
 
 # Astar with danger values added as a heuristic
 def asta(start, grid, target, strat,danger_matrix):
