@@ -155,5 +155,5 @@ Project Link: [https://github.com/al1168/Fire-Maze](https://github.com/al1168/Fi
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
+[linkedin-url]: [https://linkedin.com/in/linkedin_username](https://www.linkedin.com/in/aldenlu/)
+
